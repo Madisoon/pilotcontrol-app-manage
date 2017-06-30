@@ -1,5 +1,6 @@
 package com.syx.pilotcontrol.module.guidance.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -7,4 +8,6 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface ITaskService {
     public JSONObject insertTask(String taskInfo, String taskContext);
+
+    public JSONArray getAllTaskByConfig(String configId, String userName);
 }

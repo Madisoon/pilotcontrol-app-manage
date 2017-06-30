@@ -1,5 +1,7 @@
 package com.syx.pilotcontrol.module.guidance.service.imp;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fantasi.common.db.dao.BaseDao;
 import com.syx.pilotcontrol.module.guidance.service.ITaskService;
@@ -27,5 +29,16 @@ public class TaskService implements ITaskService {
         }
         jsonObject.put("result", result);
         return jsonObject;
+    }
+
+    @Override
+    public JSONArray getAllTaskByConfig(String configId, String userName) {
+        String getAllTaskSql = "SELECT a.*,GROUP_CONCAT(a.corpus_context) AS task_contexts FROM  " +
+                "(SELECT a.*,b.corpus_context,c.user_name FROM  guidance_task_main a  " +
+                "LEFT JOIN guidance_task_corpus b  " +
+                "ON a.id = b.task_id LEFT JOIN sys_user c ON a.task_create = c.user_loginname  " +
+                "WHERE a.config_id = ? AND a.task_create = ? ORDER BY a.task_time DESC) a GROUP BY a.id";
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(getAllTaskSql, new String[]{configId, userName}));
+        return jsonArray;
     }
 }
