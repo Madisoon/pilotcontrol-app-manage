@@ -1,7 +1,7 @@
 package com.syx.pilotcontrol.module.system.web;
 
+import com.alienlab.starter.JwtService;
 import com.syx.pilotcontrol.module.system.service.IUserService;
-import com.syx.pilotcontrol.module.system.service.imp.UserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Msater Zg on 2017/6/14.
@@ -21,6 +22,9 @@ public class UserController {
 
     @Autowired
     IUserService iUserService;
+
+    @Autowired
+    JwtService jwtService;
 
     @RequestMapping(value = "/insertSysUser", method = RequestMethod.PUT)
     @ApiOperation(value = "insertSysUser", notes = "添加配置qq")
@@ -40,6 +44,9 @@ public class UserController {
     })
     public String getAllSysUser() {
         String reuslt = iUserService.getAllSysUser().toString();
+        Map map = new HashMap();
+        map.put("user", "赵刚");
+        System.out.println(jwtService.createPersonToken(map, "1402753117", 200));
         return reuslt;
     }
 

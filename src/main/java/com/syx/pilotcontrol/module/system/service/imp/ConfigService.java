@@ -3,6 +3,7 @@ package com.syx.pilotcontrol.module.system.service.imp;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alienlab.starter.JwtService;
 import com.fantasi.common.db.dao.BaseDao;
 import com.fantasi.common.db.dao.BaseTableDao;
 import com.syx.pilotcontrol.module.system.service.IConfigService;
@@ -144,7 +145,7 @@ public class ConfigService implements IConfigService {
             getAllConfig = "SELECT a.*,b.config_name AS config_parent_name  FROM " +
                     "(SELECT b.* FROM user_guidance_authority a LEFT JOIN  " +
                     "guidance_config b ON a.config_id = b.id " +
-                    "WHERE user_loginname = '"+userName+"') a LEFT JOIN guidance_config b  ON a.config_pid = b.id ";
+                    "WHERE user_loginname = '" + userName + "') a LEFT JOIN guidance_config b  ON a.config_pid = b.id ";
         }
         JSONArray jsonArrayAuthority = (JSONArray) JSON.toJSON(baseDao.rawQuery(getAllConfig));
 

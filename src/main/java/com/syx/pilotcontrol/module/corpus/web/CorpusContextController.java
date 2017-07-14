@@ -1,6 +1,7 @@
 package com.syx.pilotcontrol.module.corpus.web;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.autocinfigure.ExampleService;
 import com.syx.pilotcontrol.module.corpus.service.ICorpusContextService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -24,6 +25,16 @@ import javax.servlet.http.HttpServletRequest;
 public class CorpusContextController {
     @Autowired
     ICorpusContextService iCorpusContextService;
+
+    @Autowired
+    ExampleService exampleService;
+
+    @RequestMapping(value = "/exampleServiceWrap", method = RequestMethod.GET)
+    public String exampleServiceWrap() {
+        String result = exampleService.wrap("lallala");
+        System.out.println(result);
+        return result;
+    }
 
     @RequestMapping(value = "/insertCorpusContext", method = RequestMethod.PUT)
     @ApiOperation(value = "insertCorpusContext", notes = "添加配置qq")
