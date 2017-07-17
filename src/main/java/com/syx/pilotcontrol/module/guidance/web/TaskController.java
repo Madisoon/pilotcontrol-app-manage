@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,5 +56,24 @@ public class TaskController {
             ex.printStackTrace();
             return "数据异常";
         }
+    }
+
+    @ApiOperation(value = "getAllMonitor", notes = "获取所有的导控任务列表")
+    @RequestMapping(value = "/getAllMonitor", method = RequestMethod.GET)
+    @ApiImplicitParams({
+    })
+    public String getAllMonitor() {
+        String result = iTaskService.getAllMonitor().toString();
+        return result;
+    }
+
+    @ApiOperation(value = "updateMonitorStatus", notes = "获取所有的导控任务列表")
+    @RequestMapping(value = "/updateMonitorStatus", method = RequestMethod.POST)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "任务id", value = "taskId", required = true, dataType = "STRING")
+    })
+    public String updateMonitorStatus(@RequestParam("taskId") String taskId) {
+        String result = iTaskService.updateMonitorStatus(taskId).toString();
+        return result;
     }
 }

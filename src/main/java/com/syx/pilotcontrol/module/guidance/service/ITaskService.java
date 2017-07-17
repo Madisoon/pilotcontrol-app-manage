@@ -10,4 +10,8 @@ public interface ITaskService {
     public JSONObject insertTask(String taskInfo, String taskContext);
 
     public JSONArray getAllTaskByConfig(String configId, String userName);
+
+    public JSONArray getAllMonitor();
+
+    public JSONObject updateMonitorStatus(String taskId);
 }
