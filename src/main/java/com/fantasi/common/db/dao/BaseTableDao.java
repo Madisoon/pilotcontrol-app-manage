@@ -15,12 +15,12 @@ import com.fantasi.common.db.process.SelectParam;
 public class BaseTableDao extends BaseDao {
 	private final static Logger logger = Logger.getLogger(BaseTableDao.class);
 	protected String[] primaryKeys;
-	
+
 	public BaseTableDao(IDBPool pool) {
 		super(pool);
 		this.primaryKeys = new String[]{"id"};
 	}
-	
+
 	public BaseTableDao(IDBPool pool, String[] keys) {
 		super(pool);
 		this.primaryKeys = keys;
@@ -28,12 +28,12 @@ public class BaseTableDao extends BaseDao {
 	public void setPrimaryKeys(String[] keys) {
 		this.primaryKeys = keys;
 	}
-	
+
 	public int insertTable(Connection conn, String table, Map<String, String> data) throws SQLException {
 		if (data == null) {
 			return 0;
 		}
-		
+
 		String columnStr = "";
 		String valueStr = "";
 		String[] params = new String[data.keySet().size()];
@@ -51,7 +51,7 @@ public class BaseTableDao extends BaseDao {
 
 		return DBHelper.execute(conn, sql, params);
 	}
-	
+
 	public int insertTable(String table, Map<String, String> data) {
 		if (data == null) {
 			return 0;
@@ -75,7 +75,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
+
 	public int insertTable(String table, List<Map<String, String>> datas) {
 		if (datas == null || datas.size() == 0) {
 			return 0;
@@ -105,7 +105,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
+
 	public int insertTable(Connection conn, String table, List<Map<String, String>> datas) throws SQLException {
 		if (datas == null || datas.size() == 0) {
 			return 0;
@@ -116,7 +116,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return result;
 	}
-	
+
 	public int insertTableAndReturn(String table, Map<String, String> data) {
 		if (data == null) {
 			return 0;
@@ -136,14 +136,14 @@ public class BaseTableDao extends BaseDao {
 			}
 			columnStr = columnStr.substring(0, columnStr.length() - 1);
 			valueStr = valueStr.substring(0, valueStr.length() - 1);
-	
+
 			String sql = "insert into " + table + "(" + columnStr + ")"
 					+ " values (" + valueStr + ");";
 			DBHelper.execute(conn, sql, params);
 			Map<String, String> map = DBHelper.queryForMap(conn, "SELECT LAST_INSERT_ID() as id;");
 			conn.commit();
 			return Integer.parseInt(map.get("id"));
-		
+
 		} catch (Exception e) {
 			logger.error("insertTableAndReturn错误:" + e.getLocalizedMessage());
 			printCallStack(e);
@@ -159,13 +159,13 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
-	
+
+
 	public int insertTableAndReturn(Connection conn, String table, Map<String, String> data) throws SQLException {
 		if (data == null) {
 			return 0;
 		}
-		
+
 		String columnStr = "";
 		String valueStr = "";
 		String[] params = new String[data.keySet().size()];
@@ -184,7 +184,7 @@ public class BaseTableDao extends BaseDao {
 		Map<String, String> map = DBHelper.queryForMap(conn, "SELECT LAST_INSERT_ID() as id;");
 		return Integer.parseInt(map.get("id"));
 	}
-	
+
 	public int updateTable(String table, Map<String, String> data) {
 		if (data == null) {
 			return 0;
@@ -200,7 +200,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return this.updateTable(table, where, params, data);
 	}
-	
+
 	public int updateTable(Connection conn, String table, Map<String, String> data) throws SQLException {
 		if (data == null) {
 			return 0;
@@ -216,7 +216,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return this.updateTable(conn, table, where, params, data);
 	}
-	
+
 	public int updateTable(Connection conn, String table, List<Map<String, String>> datas) throws SQLException {
 		int result = 0;
 		for (Map<String, String> map : datas) {
@@ -224,7 +224,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return result;
 	}
-	
+
 	public int updateTable(String table, List<Map<String, String>> datas) {
 		if (datas == null || datas.size() == 0) {
 			return 0;
@@ -251,18 +251,18 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
+
 	public int updateTable(Connection conn, String table, String whereClause, String[] whereParams, Map<String, String> data) throws SQLException {
 		if (data == null) {
 			return 0;
 		}
-		
+
 		if (!(whereClause == null || whereClause.equals(""))) {
 			whereClause = " where " + whereClause;
 		}
-		
+
 		String[] params = new String[whereParams.length + data.keySet().size()];
-		
+
 		String columnStr = " set ";
 		int index = 0;
 		for (String key : data.keySet()) {
@@ -276,19 +276,19 @@ public class BaseTableDao extends BaseDao {
 		}
 		columnStr = columnStr.substring(0, columnStr.length() - 1);
 		String sql = "update " + table + columnStr + whereClause;
-		
+
 		return DBHelper.execute(conn, sql, params);
-		
+
 	}
 	public int updateTable(Connection conn, String table, List<Filter> filters, String whereClause, String[] whereParams, Map<String, String> data) throws SQLException {
 		if (data == null) {
 			return 0;
 		}
-		
+
 		SelectParam sp = getSelectParam(filters, whereClause, whereParams);
-		
+
 		String[] params = new String[sp.getParams().length + data.keySet().size()];
-		
+
 		String columnStr = " set ";
 		int index = 0;
 		for (String key : data.keySet()) {
@@ -305,11 +305,11 @@ public class BaseTableDao extends BaseDao {
 		}
 		columnStr = columnStr.substring(0, columnStr.length() - 1);
 		String sql = "update " + table + columnStr + sp.getWhereClause();
-		
+
 		return DBHelper.execute(conn, sql, params);
-		
+
 	}
-	
+
 	public int updateTable(String table, List<Filter> filters, String whereClause, String[] params, Map<String, String> data) {
 		if (data == null) {
 			return 0;
@@ -333,8 +333,8 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
-	
+
+
 	public int updateTable(String table, String whereClause, String[] params, Map<String, String> data) {
 		if (data == null) {
 			return 0;
@@ -358,8 +358,8 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
-	
+
+
 	public int replaceTable(Connection conn, String table, Map<String, String> data) throws SQLException {
 		String[] params = new String[this.primaryKeys.length];
 		int index = 0;
@@ -381,7 +381,7 @@ public class BaseTableDao extends BaseDao {
 			return insertTable(conn, table, data);
 		}
 	}
-	
+
 	public int replaceTable(String table, Map<String, String> data) {
 		if (data == null) {
 			return 0;
@@ -405,7 +405,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
+
 	public int replaceTable(String table, List<Map<String, String>> datas) {
 		if (datas == null || datas.size() == 0) {
 			return 0;
@@ -435,14 +435,14 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
+
 	public int deleteTable(Connection conn, String table, List<Filter> filters) throws SQLException {
 		SelectParam sp = getSelectParam(filters, "", null);
 		String sql = "delete from " + table + sp.getWhereClause();
 		return DBHelper.execute(conn, sql, sp.getParams());
 	}
-	
-	
+
+
 	public int deleteTable(String table, List<Filter> filters) {
 		Connection conn = null;
 		try {
@@ -463,7 +463,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
+
 	public int deleteTable(String table, String whereClause, String[] params) {
 		Connection conn = null;
 		try {
@@ -484,7 +484,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
+
 	public int deleteTable(Connection conn, String table, String whereClause, String[] params) throws SQLException {
 		if (!(whereClause == null || whereClause.equals(""))) {
 			whereClause = " where " + whereClause;
@@ -492,7 +492,7 @@ public class BaseTableDao extends BaseDao {
 		String sql = "delete from " + table + whereClause;
 		return DBHelper.execute(conn, sql, params);
 	}
-	
+
 	public Map<String, String> queryTableForMap(String table, String whereClause, String[] params) {
 		List<Map<String, String>> list = this.queryTable(table, whereClause, params);
 		if (list.size() > 0) {
@@ -501,24 +501,24 @@ public class BaseTableDao extends BaseDao {
 			return null;
 		}
 	}
-	
+
 	public Map<String, String> queryTableForMap(Connection conn, String table, String whereClause, String[] params) throws SQLException {
 		return queryTableForMap(conn, table, null, whereClause, params);
 	}
-	
+
 	public Map<String, String> queryTableForMap(Connection conn, String table, Filter filter, String whereClause, String[] params) throws SQLException {
-		
+
 		SelectParam sp = getSelectParam(filter, whereClause, params);
 		String sql = "select * from " +
 				table + sp.getWhereClause();
-		
+
 		return DBHelper.queryForMap(conn, sql, sp.getParams());
 	}
-	
+
 	public int queryTableForInt(String table, String field, String where, String[] params) {
 		return this.queryTableForInt(table, field, null, where, params);
 	}
-	
+
 	public int queryTableForInt(String table, String field, List<Filter> filters, String where, String[] params) {
 		Connection conn = null;
 		try {
@@ -539,7 +539,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
+
 	public int queryTableForInt(String table, String field, String where, String[] params, Filter filter) {
 		Connection conn = null;
 		try {
@@ -560,29 +560,29 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
+
 	public int queryTableForInt(Connection conn, String table, String field, List<Filter> filters, String where, String[] params) throws SQLException {
 		SelectParam sp = getSelectParam(filters, where, params);
 		String sql = "select " + field + " from " +
 				table + sp.getWhereClause();
 		return DBHelper.queryForInt(conn, sql, sp.getParams());
 	}
-	
+
 	public int queryTableForInt(Connection conn, String table, String field, String where, String[] params, Filter filter) throws SQLException {
 		SelectParam sp = getSelectParam(filter, where, params);
 		String sql = "select " + field + " from " +
 				table + sp.getWhereClause();
 		return DBHelper.queryForInt(conn, sql, sp.getParams());
 	}
-	
+
 	public long queryTableForLong(String table, String field) {
 		return this.queryTableForLong(table, field, null, null, null);
 	}
-	
+
 	public long queryTableForLong(String table, String field, String where, String[] params) {
 		return this.queryTableForLong(table, field, null, where, params);
 	}
-	
+
 	public long queryTableForLong(String table, String field, List<Filter> filters, String where, String[] params) {
 		Connection conn = null;
 		try {
@@ -603,14 +603,14 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
+
 	public long queryTableForLong(Connection conn, String table, String field, List<Filter> filters, String where, String[] params) throws SQLException {
 		SelectParam sp = getSelectParam(filters, where, params);
 		String sql = "select " + field + " from " +
 				table + sp.getWhereClause();
 		return DBHelper.queryForLong(conn, sql, sp.getParams());
 	}
-	
+
 	public int queryTableCount(String table, List<Filter> filters, String where, String[] params) {
 		Connection conn = null;
 		try {
@@ -631,7 +631,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
+
 	public int queryTableCount(String table, String where, String[] params, Filter filter) {
 		Connection conn = null;
 		try {
@@ -652,22 +652,22 @@ public class BaseTableDao extends BaseDao {
 		}
 		return -1;
 	}
-	
-	
+
+
 	public int queryTableCount(Connection conn, String table, List<Filter> filters, String where, String[] params) throws SQLException {
 		SelectParam sp = getSelectParam(filters, where, params);
 		String sql = "select count(*) from " +
 				table + sp.getWhereClause();
 		return DBHelper.queryForInt(conn, sql, sp.getParams());
 	}
-	
+
 	public int queryTableCount(Connection conn, String table, String where, String[] params, Filter filter) throws SQLException {
 		SelectParam sp = getSelectParam(filter, where, params);
 		String sql = "select count(*) from " +
 				table + sp.getWhereClause();
 		return DBHelper.queryForInt(conn, sql, sp.getParams());
 	}
-	
+
 	public List<Map<String, String>> queryTable(String table) {
 		Connection conn = null;
 		try {
@@ -690,37 +690,37 @@ public class BaseTableDao extends BaseDao {
 		}
 		return new ArrayList<Map<String,String>>();
 	}
-	
+
 	public List<Map<String, String>> queryTable(String table, String where, String[] params) {
 		return this.queryTable(table, null, null, where, params, null, null, null, null);
 	}
-	
+
 	public List<Map<String, String>> queryTable(Connection conn, String table, String[] columns, List<Filter> filters, String where, String[] params,
 			String groupBy, String having, String orderBy, String limit) throws SQLException {
-		
-		
+
+
 		SelectParam sp = getSelectParam(filters, where, params);
 		String columnStr = getColumnStr(columns);
 		String groupByClause = getGroupByHaving(groupBy, having);
 		String orderByCluase = getOrderByClause(orderBy);
 		String limitByCluase = getLimitClause(limit);
-		
+
 		String sql = "select " + columnStr + " from " +
 				table + sp.getWhereClause() + groupByClause + orderByCluase + limitByCluase;
 		return DBHelper.query(conn, sql, sp.getParams());
-		
+
 	}
-	
+
 	public List<Map<String, String>> queryTable(String table, String[] columns, List<Filter> filters, String where, String[] params,
 			String groupBy, String having, String orderBy, String limit) {
-		
-		
+
+
 		SelectParam sp = getSelectParam(filters, where, params);
 		String columnStr = getColumnStr(columns);
 		String groupByClause = getGroupByHaving(groupBy, having);
 		String orderByCluase = getOrderByClause(orderBy);
 		String limitByCluase = getLimitClause(limit);
-		
+
 		Connection conn = null;
 		try {
 			conn = pool.getConnection();
@@ -742,17 +742,17 @@ public class BaseTableDao extends BaseDao {
 		}
 		return new ArrayList<Map<String,String>>();
 	}
-	
+
 	public List<Map<String, String>> queryTable(String table, String[] columns, String where, String[] params, Filter filter,
 			String groupBy, String having, String orderBy, String limit) {
-		
-		
+
+
 		SelectParam sp = getSelectParam(filter, where, params);
 		String columnStr = getColumnStr(columns);
 		String groupByClause = getGroupByHaving(groupBy, having);
 		String orderByCluase = getOrderByClause(orderBy);
 		String limitByCluase = getLimitClause(limit);
-		
+
 		Connection conn = null;
 		try {
 			conn = pool.getConnection();
@@ -774,24 +774,24 @@ public class BaseTableDao extends BaseDao {
 		}
 		return new ArrayList<Map<String,String>>();
 	}
-	
-	
+
+
 	private SelectParam getSelectParam(Filter filter, String where, String[] params) {
 		SelectParam sp = Filter.getFilterParams(filter);
 		sp.setWhereClause(getWhereClause(sp.getWhereClause(), where));
 		sp.setParams(getParams(sp.getParams(), params));
 		return sp;
 	}
-	
+
 	private SelectParam getSelectParam(List<Filter> filters, String where, String[] params) {
 		SelectParam sp = Filter.getFilterParams(filters);
 		sp.setWhereClause(getWhereClause(sp.getWhereClause(), where));
 		sp.setParams(getParams(sp.getParams(), params));
 		return sp;
 	}
-	
+
 	private String getColumnStr (String[] columns) {
-		
+
 		if (columns != null && columns.length != 0) {
 			String columnStr = "";
 			for (String col : columns) {
@@ -806,7 +806,7 @@ public class BaseTableDao extends BaseDao {
 			return "*";
 		}
 	}
-	
+
 	private String[] getParams(String[] filterParams, String[] params) {
 		String[] newParams = null;
 		if (params == null || params.length == 0) {
@@ -823,7 +823,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return newParams;
 	}
-	
+
 	private String getWhereClause(String filterWhere, String where) {
 		String whereClause = "";
 		if (where == null || where.equals("")) {
@@ -839,7 +839,7 @@ public class BaseTableDao extends BaseDao {
 		}
 		return whereClause;
 	}
-	
+
 	private String getGroupByHaving(String groupBy, String having) {
 		if (groupBy == null || groupBy.equals("")) {
 			return "";
@@ -849,19 +849,19 @@ public class BaseTableDao extends BaseDao {
 		}
 		return " group by " + groupBy + " having " + having;
 	}
-	
+
 	private String getOrderByClause(String orderBy) {
 		if (orderBy == null || orderBy.equals("")) {
 			return "";
 		}
 		return " order by " + orderBy;
 	}
-	
+
 	private String getLimitClause(String limit) {
 		if (limit == null || limit.equals("")) {
 			return "";
 		}
 		return " limit " + limit;
 	}
-	
+
 }

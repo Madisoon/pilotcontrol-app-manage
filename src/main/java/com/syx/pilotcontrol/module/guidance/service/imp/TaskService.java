@@ -6,8 +6,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.fantasi.common.db.dao.BaseDao;
 import com.syx.pilotcontrol.module.guidance.service.ITaskService;
 import com.syx.pilotcontrol.utils.SqlEasy;
+import javafx.scene.Parent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * Created by Msater Zg on 2017/6/29.
@@ -25,7 +28,8 @@ public class TaskService implements ITaskService {
         String[] taskContexts = taskContext.split(",");
         String insertTaskSql = SqlEasy.insertObject(taskInfo, "guidance_task_main");
         int result = baseDao.execute(insertTaskSql);
-        int taskId = 0;
+        Map<String, String> map = baseDao.rawQueryForMap("SELECT id FROM guidance_task_main ORDER BY id  DESC  LIMIT 1");
+        int taskId = Integer.parseInt(map.get("id"));
         if ("".equals(taskContext)) {
             // 浏览帖子
         } else {

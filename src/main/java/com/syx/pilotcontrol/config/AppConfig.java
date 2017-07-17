@@ -29,16 +29,21 @@ public class AppConfig {
         return pool;
     }
 
-    public @Bean BaseTableDao tableDao() {
+    public
+    @Bean
+    BaseTableDao tableDao() {
         return new BaseTableDao(pool);
     }
 
-    public @Bean BaseDao baseDao() {
+    public
+    @Bean
+    BaseDao baseDao() {
         return new BaseDao(pool);
     }
-/*
-    public @Bean
+
+    public
+    @Bean
     BaseDictDao baseDictDao() {
-        return new BaseDictDao();
-    }*/
+        return new BaseDictDao(pool, "guidance_task_main");
+    }
 }
