@@ -5,6 +5,7 @@ import com.fantasi.common.db.dao.BaseDictDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import com.fantasi.common.db.DBPool;

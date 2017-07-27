@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class PilotcontrolApplication {
     public static void main(String[] args) {
-
         SpringApplication.run(PilotcontrolApplication.class, args);
 
     }
