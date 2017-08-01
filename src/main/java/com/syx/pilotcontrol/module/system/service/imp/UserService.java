@@ -160,10 +160,9 @@ public class UserService implements IUserService {
                 listModule.add("WHERE a.user_loginname = '" + userName + "'  ");
                 listModule.add("AND a.user_loginname = b.user_id AND b.role_id = c.id  ");
                 listModule.add("AND b.role_id = d.role_id AND d.menu_id = f.menu_id  ");
-                listModule.add("AND f.menu_pid = 0 ");
-
+                listModule.add("AND f.menu_pid = 0 ORDER BY f.menu_sort ");
                 List<String> listFunction = new ArrayList<>();
-                listFunction.add("SELECT a.*,b.menu_name AS menu_parent_name FROM (SELECT f.menu_id,f.menu_pid,f.menu_name,f.menu_content,f.menu_attr ");
+                listFunction.add("SELECT a.*,b.menu_name AS menu_parent_name,b.menu_attr AS menu_parent_attr FROM (SELECT f.menu_id,f.menu_pid,f.menu_name,f.menu_content,f.menu_attr ");
                 listFunction.add("FROM sys_user a,sys_role_user b,sys_role c,sys_role_menu d,sys_menu f  ");
                 listFunction.add(" WHERE a.user_loginname = '" + userName + "'  ");
                 listFunction.add(" AND a.user_loginname = b.user_id AND b.role_id = c.id  ");

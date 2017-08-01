@@ -20,7 +20,7 @@ import java.util.Random;
  */
 @Service
 public class TaskService implements ITaskService {
-    private final String pilcontrolUrl = "http://10.0.0.36:18080/api/guide";
+    private final String pilcontrolUrl = "http://121.199.4.149:18080/api/guide";
 
     @Autowired
     BaseDao baseDao;
@@ -63,6 +63,10 @@ public class TaskService implements ITaskService {
         int taskId = Integer.parseInt(map.get("id"));
         if ("".equals(taskContext)) {
             // 浏览帖子
+            int taskNumberInt = Integer.parseInt(taskNumber);
+            for (int i = 0; i < taskNumberInt; i++) {
+
+            }
         } else {
             // 回帖
             for (int i = 0; i < taskContextsLen; i++) {
@@ -85,6 +89,9 @@ public class TaskService implements ITaskService {
             mapPost.put("title", taskTitle);
             mapPost.put("content", taskContexts[randomContext]);
             HttpClientUtil.sendPost(pilcontrolUrl, mapPost);
+            System.out.println("账号" + jsonObjectNumber.getString("number_name"));
+            System.out.println("密码" + jsonObjectNumber.getString("number_password"));
+            System.out.println("内容" + taskContexts[randomContext]);
         }
         jsonObject.put("result", result);
         return jsonObject;
@@ -119,6 +126,22 @@ public class TaskService implements ITaskService {
         String updateStatusSql = "UPDATE guidance_task_main SET task_status = 1 WHERE id = ? ";
         JSONObject jsonObject = new JSONObject();
         int result = baseDao.execute(updateStatusSql, new String[]{taskId});
+        jsonObject.put("result", result);
+        return jsonObject;
+    }
+
+    @Override
+    public JSONObject deleteTaskById(String taskId) {
+        String deleteTask = "DELETE FROM guidance_task_main WHERE id = ? ";
+        String deleteTaskCorpus = "DELETE FROM guidance_task_corpus WHERE task_id = ? ";
+        String[] taskIdS = taskId.split(",");
+        int taskIdSLen = taskIdS.length;
+        int result = 0;
+        for (int i = 0; i < taskIdSLen; i++) {
+            result = baseDao.execute(deleteTask, new String[]{taskIdS[i]});
+            baseDao.execute(deleteTaskCorpus, new String[]{taskIdS[i]});
+        }
+        JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", result);
         return jsonObject;
     }

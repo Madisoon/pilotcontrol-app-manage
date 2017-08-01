@@ -14,4 +14,6 @@ public interface ITaskService {
     public JSONArray getAllMonitor();
 
     public JSONObject updateMonitorStatus(String taskId);
+
+    public JSONObject deleteTaskById(String taskId);
 }

@@ -136,13 +136,4 @@ public class HttpClientUtil {
         }
         return jsonObject;
     }
-
-
-    public static void main(String[] args) {
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("ids", "6882,66");
-
-        System.out.println(HttpClientUtil.sendPost(
-                "http://118.178.237.219:8080/yuqingmanage/manage/deleteCustomerInfo", param));
-    }
 }

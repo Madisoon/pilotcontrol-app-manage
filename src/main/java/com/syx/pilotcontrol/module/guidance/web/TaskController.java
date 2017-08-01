@@ -76,4 +76,14 @@ public class TaskController {
         String result = iTaskService.updateMonitorStatus(taskId).toString();
         return result;
     }
+
+    @ApiOperation(value = "deleteTaskById", notes = "删除导控的一些任务")
+    @RequestMapping(value = "/deleteTaskById", method = RequestMethod.POST)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "任务id", value = "taskId", required = true, dataType = "STRING")
+    })
+    public String deleteTaskById(@RequestParam("taskId") String taskId) {
+        String result = iTaskService.deleteTaskById(taskId).toString();
+        return result;
+    }
 }
