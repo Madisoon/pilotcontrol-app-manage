@@ -7,13 +7,12 @@ import com.fantasi.common.db.dao.BaseDao;
 import com.syx.pilotcontrol.module.guidance.service.ITaskService;
 import com.syx.pilotcontrol.utils.HttpClientUtil;
 import com.syx.pilotcontrol.utils.SqlEasy;
-import javafx.scene.Parent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Created by Msater Zg on 2017/6/29.
@@ -26,6 +25,7 @@ public class TaskService implements ITaskService {
     BaseDao baseDao;
 
     @Override
+    @Async
     public JSONObject insertTask(String taskInfo, String taskContext) {
         JSONObject jsonObject = JSON.parseObject(taskInfo);
         String configId = jsonObject.getString("config_id");
@@ -77,6 +77,7 @@ public class TaskService implements ITaskService {
         // 所有的系统的账号
         int jsonArrayNumberLen = jsonArrayNumber.size();
         // type 1代表发帖（需要标题和内容），2代表回帖 （只需要语料的内容）
+        int numberSuccess = 0;
         for (int i = 0; i < Integer.parseInt(taskNumber, 10); i++) {
             int randomNumber = (int) (Math.random() * jsonArrayNumberLen);
             int randomContext = (int) (Math.random() * taskContextsLen);
@@ -88,11 +89,15 @@ public class TaskService implements ITaskService {
             mapPost.put("url", taskUrl);
             mapPost.put("title", taskTitle);
             mapPost.put("content", taskContexts[randomContext]);
-            HttpClientUtil.sendPost(pilcontrolUrl, mapPost);
-            System.out.println("账号" + jsonObjectNumber.getString("number_name"));
-            System.out.println("密码" + jsonObjectNumber.getString("number_password"));
-            System.out.println("内容" + taskContexts[randomContext]);
+            JSONObject jsonObjectSuccess = HttpClientUtil.sendPost(pilcontrolUrl, mapPost);
+            String valueSuccess = jsonObjectSuccess.getString("status");
+            System.out.println(jsonObjectSuccess);
+            if (valueSuccess.equals("1")) {
+                numberSuccess++;
+            }
         }
+        String updateSql = "UPDATE guidance_task_main SET task_number_success = ? WHERE id = ? ";
+        baseDao.execute(updateSql, new String[]{String.valueOf(numberSuccess), String.valueOf(taskId)});
         jsonObject.put("result", result);
         return jsonObject;
     }

@@ -142,7 +142,10 @@
     </dependencies>
 
     <build>
+        <!--配置打包的名称-->
+        <finalName>pilotcontrol-app-manage</finalName>
         <plugins>
+            <!--spring boot maven 打包插件-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

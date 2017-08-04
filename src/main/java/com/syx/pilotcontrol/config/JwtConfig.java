@@ -1,3 +1,4 @@
+/*
 package com.syx.pilotcontrol.config;
 
 import io.jsonwebtoken.Claims;
@@ -11,9 +12,11 @@ import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
 
+*/
 /**
  * Created by Msater Zg on 2017/3/13.  jwt实现方式
- */
+ *//*
+
 @Component
 public class JwtConfig {
     public static Claims parseJWT(String jsonWebToken, String base64Security) {
@@ -37,9 +40,11 @@ public class JwtConfig {
         //生成签名密钥 就是一个base64加密后的字符串？
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(base64Security);
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-        /*JSONObject jsonObject = new JSONObject();
+        */
+/*JSONObject jsonObject = new JSONObject();
         jsonObject.put("userName", name);
-        jsonObject.put("userLoginName", userId);*/
+        jsonObject.put("userLoginName", userId);*//*
+
         //添加构成JWT的参数
         JwtBuilder builder = Jwts.builder().setHeaderParam("typ", "JWT")
                 .setIssuedAt(now)  //创建时间
@@ -60,3 +65,4 @@ public class JwtConfig {
         return builder.compact();
     }
 }
+*/

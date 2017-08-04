@@ -12,6 +12,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -23,7 +25,6 @@ import java.util.Map;
 /**
  * Created by Msater Zg on 2016/12/15.
  */
-@SuppressWarnings("deprecation")
 public class HttpClientUtil {
     /**
      * 发送post请求
@@ -90,6 +91,7 @@ public class HttpClientUtil {
      * @return
      */
     @SuppressWarnings({"resource"})
+    @Async
     public static JSONObject sendPost(String url, Map<String, String> params) {
         DefaultHttpClient client = new DefaultHttpClient();
         RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(2000).setConnectTimeout(2000).build();// 设置请求和传输超时时间
