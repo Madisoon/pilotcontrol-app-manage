@@ -73,4 +73,14 @@ public class UserController {
         String reuslt = iUserService.judgeUser(userName, userPassword).toString();
         return reuslt;
     }
+
+    @RequestMapping(value = "/getSysUser", method = RequestMethod.GET)
+    @ApiOperation(value = "getSysUser", notes = "获取用户积分")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "用户登陆账号", required = true, dataType = "STRING")
+    })
+    public String getSysUser(@RequestParam("userName") String userName) {
+        String reuslt = iUserService.getSysUser(userName).toString();
+        return reuslt;
+    }
 }

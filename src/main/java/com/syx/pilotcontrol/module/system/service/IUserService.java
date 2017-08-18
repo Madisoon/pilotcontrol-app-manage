@@ -19,4 +19,6 @@ public interface IUserService {
 
     public JSONObject getUserInfoSingle(String userName);
 
+    public JSONObject getSysUser(String userName);
+
 }

@@ -22,8 +22,8 @@ import java.util.*;
 public class UserService implements IUserService {
     @Autowired
     BaseDao baseDao;
-/*    @Autowired
-    JwtConfig jwtConfig;*/
+    /*    @Autowired
+        JwtConfig jwtConfig;*/
     @Autowired
     IConfigService iConfigService;
 
@@ -211,6 +211,13 @@ public class UserService implements IUserService {
                 "ON a.role_id = b.id ";
         Map map = baseDao.rawQueryForMap(getUserInfoSql, new String[]{userName});
         JSONObject jsonObject = (JSONObject) JSON.toJSON(map);
+        return jsonObject;
+    }
+
+    @Override
+    public JSONObject getSysUser(String userName) {
+        String getSql = "SELECT * FROM sys_user a WHERE a.user_loginname = ? ";
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(getSql, new String[]{userName}));
         return jsonObject;
     }
 }
