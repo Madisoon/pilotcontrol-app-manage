@@ -16,4 +16,8 @@ public interface IManPowerTaskService {
 
     public JSONObject changeOrderStatus(String orderId, String orderStatus);
 
+    public JSONObject getAllManPowerByType(String type, String pageSize, String pageNumber);
+
+    public JSONObject updateManPowerData(String id, String orderStatus, String orderData);
+
 }

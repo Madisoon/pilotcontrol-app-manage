@@ -63,4 +63,40 @@ public class ManPowerTaskController {
         String result = iManPowerTaskService.changeOrderStatus(orderId, orderStatus).toString();
         return result;
     }
+
+    @PostMapping(value = "/getAllManPowerByType")
+    @ApiOperation(value = "getAllManPowerByType", notes = "获取所有人的导控请求")
+    @ApiImplicitParams({
+    })
+    public String getAllManPowerByType(HttpServletRequest request) {
+        try {
+            String param = IOUtils.toString(request.getInputStream(), "utf-8");
+            JSONObject params = JSONObject.parseObject(param);
+            String type = params.getString("type");
+            String pageSize = params.getString("pageSize");
+            String pageNumber = params.getString("pageNumber");
+            String result = "";
+            result = iManPowerTaskService.getAllManPowerByType(type, pageSize, pageNumber).toString();
+            return result;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "数据异常";
+        }
+    }
+
+    @PostMapping(value = "/updateManPowerData")
+    @ApiOperation(value = "updateManPowerData", notes = "改变状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "orderId", value = "订单id", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "orderStatus", value = "订单状态", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "orderData", value = "订单数据", required = true, dataType = "STRING")
+    })
+    public String updateManPowerData(@RequestParam("orderId") String orderId,
+                                     @RequestParam("orderStatus") String orderStatus,
+                                     @RequestParam("orderData") String orderData) {
+        String result = iManPowerTaskService.updateManPowerData(orderId, orderStatus, orderData).toString();
+        return result;
+    }
+
+
 }
