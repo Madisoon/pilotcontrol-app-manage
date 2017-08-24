@@ -148,9 +148,6 @@ public class ConfigService implements IConfigService {
                     "WHERE user_loginname = '" + userName + "') a LEFT JOIN guidance_config b  ON a.config_pid = b.id ";
         }
         JSONArray jsonArrayAuthority = (JSONArray) JSON.toJSON(baseDao.rawQuery(getAllConfig));
-
-        System.out.println(jsonArray);
-        System.out.println(jsonArrayAuthority);
         for (int i = 0, jsonArrayLen = jsonArray.size(); i < jsonArrayLen; i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             JSONArray jsonArraySingle = new JSONArray();

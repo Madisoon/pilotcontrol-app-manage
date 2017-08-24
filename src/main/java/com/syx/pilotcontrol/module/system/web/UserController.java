@@ -1,12 +1,16 @@
 package com.syx.pilotcontrol.module.system.web;
 
+import com.syx.pilotcontrol.config.JwtConfig;
 import com.syx.pilotcontrol.module.system.service.IUserService;
+import com.syx.pilotcontrol.utils.WebTokenUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -19,6 +23,10 @@ public class UserController {
 
     @Autowired
     IUserService iUserService;
+    @Autowired
+    JwtConfig jwtConfig;
+    @Autowired
+    WebTokenUtil webTokenUtil;
 
     @RequestMapping(value = "/insertSysUser", method = RequestMethod.PUT)
     @ApiOperation(value = "insertSysUser", notes = "添加配置qq")
@@ -36,7 +44,7 @@ public class UserController {
     @ApiOperation(value = "getAllSysUser", notes = "获取到所有的用户")
     @ApiImplicitParams({
     })
-    public String getAllSysUser() {
+    public String getAllSysUser(HttpServletRequest request) {
         String reuslt = iUserService.getAllSysUser().toString();
         return reuslt;
     }
@@ -58,7 +66,11 @@ public class UserController {
             @ApiImplicitParam(name = "userCorpus", value = "用户的语料权限", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "userConfig", value = "用户的导控权限", required = true, dataType = "STRING")
     })
-    public String updateUser(@RequestParam("userData") String userData, @RequestParam("userCorpus") String userCorpus, @RequestParam("userConfig") String userConfig) {
+    public String updateUser(@RequestParam("userData") String userData,
+                             @RequestParam("userCorpus") String userCorpus,
+                             @RequestParam("userConfig") String userConfig,
+                             HttpServletRequest request) {
+        System.out.println(webTokenUtil.getUserNameByToken(request));
         String reuslt = iUserService.updateUser(userData, userCorpus, userConfig).toString();
         return reuslt;
     }

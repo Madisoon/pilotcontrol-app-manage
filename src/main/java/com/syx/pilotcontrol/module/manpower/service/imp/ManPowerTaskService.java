@@ -44,16 +44,23 @@ public class ManPowerTaskService implements IManPowerTaskService {
 
     @Override
     public JSONObject getAllManPower(String userLoginName, String type, String pageSize, String pageNumber) {
+        String[] types = type.split(",");
+        int typesLen = types.length;
+        List list = new ArrayList();
+        list.add(" a.task_type = '" + types[0] + "' ");
+        for (int i = 1; i < typesLen; i++) {
+            list.add(" OR a.task_type = '" + types[i] + "' ");
+        }
         String getAllMan = "SELECT a.*,GROUP_CONCAT(a.manpower_content) AS manpower_contents, " +
                 "GROUP_CONCAT(a.manpower_time) AS manpower_times  " +
                 "FROM (SELECT * FROM (SELECT * FROM guidance_manpower_task a  " +
-                "WHERE a.task_type = ?  " +
-                "AND a.task_create = ? " +
+                "WHERE a.task_create = ? AND " +
+                " (" + StringUtils.join(list, "") + ") " +
                 "ORDER BY a.task_time DESC " + SqlEasy.limitPage(pageSize, pageNumber) + ") a  " +
                 "LEFT JOIN guidance_manpower_feedback b " +
                 "ON a.id = b.manpower_id) a GROUP BY a.id ORDER BY a.task_time DESC";
 
-        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(getAllMan, new String[]{type, userLoginName}));
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(getAllMan, new String[]{userLoginName}));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", jsonArray);
         return jsonObject;

@@ -4,13 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fantasi.common.db.dao.BaseDao;
-/*import com.syx.pilotcontrol.config.JwtConfig;*/
+import com.syx.pilotcontrol.config.JwtConfig;
 import com.syx.pilotcontrol.module.system.service.IConfigService;
 import com.syx.pilotcontrol.module.system.service.IUserService;
 import com.syx.pilotcontrol.utils.Md5Azdg;
-/*import io.jsonwebtoken.Claims;*/
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,10 +22,13 @@ import java.util.*;
 public class UserService implements IUserService {
     @Autowired
     BaseDao baseDao;
-    /*    @Autowired
-        JwtConfig jwtConfig;*/
+    @Autowired
+    JwtConfig jwtConfig;
     @Autowired
     IConfigService iConfigService;
+
+    @Value("${sys.code}")
+    String cipherCode;
 
     @Override
     public JSONObject insertSysUser(String userData, String userCorpus, String userConfig) {
@@ -151,9 +154,11 @@ public class UserService implements IUserService {
             if (jsonObjectData.getString("user_password").equals(Md5Azdg.md5s(userPassword))) {
                 //密码匹配 得到菜单等一些其他的信息
                 //放入用户的基础信息
-                /*String jwtToken = jwtConfig.createJWT(userName, "14", "服务管理平台", "zg", "yuqingmanage", 200, "091418wa!");
-                Claims claims = jwtConfig.parseJWT(jwtToken, "091418wa!");*/
-                /*jsonObjectData.put("token", jwtToken);*/
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("userLoginName", userName);
+                String jwtToken = jwtConfig.createJWT(jsonObject, "zg", "pilotcontrol-app-manage", 604800, cipherCode);
+                /*Claims claims = jwtConfig.parseJWT(jwtToken, "091418wa!");*/
+                jsonObjectData.put("token", jwtToken);
                 List<String> listModule = new ArrayList<>();
                 listModule.add("SELECT f.menu_id,f.menu_pid,f.menu_name,f.menu_content,f.menu_attr ");
                 listModule.add("FROM sys_user a,sys_role_user b,sys_role c,sys_role_menu d,sys_menu f  ");
@@ -192,8 +197,9 @@ public class UserService implements IUserService {
                 returnJson.put("module", jsonArrayModule);
                 returnJson.put("function", jsonObjectFunction);
                 returnJson.put("config", iConfigService.getAllTypeConfig(userName));
-                /*returnJson.put("token", jwtToken);*/
+                returnJson.put("token", jwtToken);
                 returnJson.put("result", 1);
+                System.out.println(jwtToken);
             } else {
                 //密码不匹配
                 returnJson.put("result", 0);

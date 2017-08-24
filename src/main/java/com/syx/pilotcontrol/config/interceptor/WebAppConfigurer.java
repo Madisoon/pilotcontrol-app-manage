@@ -13,12 +13,11 @@ public class WebAppConfigurer extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 多个拦截器组成一个拦截器链 ,可以添加多个
+        // addPathPatterns 用于添加拦截规则 , excludePathPatterns 用户排除拦截
 
-        // addPathPatterns 用于添加拦截规则
-
-        // excludePathPatterns 用户排除拦截
-        registry.addInterceptor(new ApiInterceptor()).addPathPatterns("/**");  //对来自/user/** 这个链接来的请求进行拦截
-        registry.addInterceptor(new ApiInterceptor()).addPathPatterns("/user/**");  //对来自/user/** 这个链接来的请求进行拦截
+        // 拦截除
+        registry.addInterceptor(new ApiInterceptor()).addPathPatterns("/**").excludePathPatterns("/system/judgeUser");  //对来自/user/** 这个链接来的请求进行拦截
+       /* registry.addInterceptor(new ExcludeInterceptor()).excludePathPatterns("/system/judgeUser");  //对来自/user*//** 这个链接来的请求进行拦截*/
         super.addInterceptors(registry);
     }
 }
