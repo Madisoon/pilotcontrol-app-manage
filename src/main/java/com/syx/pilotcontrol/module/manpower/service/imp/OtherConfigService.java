@@ -65,5 +65,12 @@ public class OtherConfigService implements IOtherConfigService {
         return jsonObject;
     }
 
-
+    @Override
+    public JSONObject getOtherConfigByType(String getOtherConfigByType) {
+        String getOtherConfig = "SELECT * FROM guidance_other_config a WHERE a.other_type = ? AND other_status =1";
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(getOtherConfig, new String[]{getOtherConfigByType}));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("data", jsonArray);
+        return jsonObject;
+    }
 }

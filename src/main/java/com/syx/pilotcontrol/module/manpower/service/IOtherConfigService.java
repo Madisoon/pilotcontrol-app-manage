@@ -10,6 +10,8 @@ public interface IOtherConfigService {
 
     public JSONObject getAllOtherConfig();
 
+    public JSONObject getOtherConfigByType(String getOtherConfigByType);
+
     public JSONObject deleteOtherConfig(String configId);
 
     public JSONObject updateOtherConfig(String otherData, String otherId);
