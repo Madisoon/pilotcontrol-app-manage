@@ -16,7 +16,9 @@ public class WebAppConfigurer extends WebMvcConfigurerAdapter {
         // addPathPatterns 用于添加拦截规则 , excludePathPatterns 用户排除拦截
 
         // 拦截除
-        registry.addInterceptor(new ApiInterceptor()).addPathPatterns("/**").excludePathPatterns("/system/judgeUser");  //对来自/user/** 这个链接来的请求进行拦截
+        registry.addInterceptor(new ApiInterceptor()).addPathPatterns("/**")
+                .excludePathPatterns("/system/judgeUser")
+                .excludePathPatterns("/manpower/uploadImage");  //对来自/user/** 这个链接来的请求进行拦截
        /* registry.addInterceptor(new ExcludeInterceptor()).excludePathPatterns("/system/judgeUser");  //对来自/user*//** 这个链接来的请求进行拦截*/
         super.addInterceptors(registry);
     }

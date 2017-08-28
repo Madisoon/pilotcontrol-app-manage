@@ -11,7 +11,6 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
-import java.util.Map;
 
 /*
  * Created by Msater Zg on 2017/3/13.  jwt实现方式

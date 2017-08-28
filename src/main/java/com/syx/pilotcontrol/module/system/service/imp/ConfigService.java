@@ -3,11 +3,9 @@ package com.syx.pilotcontrol.module.system.service.imp;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alienlab.starter.JwtService;
 import com.fantasi.common.db.dao.BaseDao;
 import com.fantasi.common.db.dao.BaseTableDao;
 import com.syx.pilotcontrol.module.system.service.IConfigService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

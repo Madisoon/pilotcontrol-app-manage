@@ -164,4 +164,64 @@
             </plugin>
         </plugins>
     </build>
+    <!--<build>
+           &lt;!&ndash;配置打包的名称&ndash;&gt;
+           <finalName>daokong-app-manage</finalName>
+           <plugins>
+               &lt;!&ndash;spring boot maven 打包插件&ndash;&gt;
+               <plugin>
+                   <groupId>org.springframework.boot</groupId>
+                   <artifactId>spring-boot-maven-plugin</artifactId>
+               </plugin>
+               <plugin>
+                   <groupId>org.springframework.boot</groupId>
+                   <artifactId>spring-boot-maven-plugin</artifactId>
+                   <dependencies>
+                       &lt;!&ndash; spring热部署 &ndash;&gt;
+                       <dependency>
+                           <groupId>org.springframework</groupId>
+                           <artifactId>springloaded</artifactId>
+                           <version>1.2.5.RELEASE</version>
+                       </dependency>
+                   </dependencies>
+               </plugin>
+           </plugins>
+           <resources>
+               <resource>
+                   <directory>src/main/resources/</directory>
+                   <filtering>true</filtering>
+                   <includes>
+                       <include>**/*.properties</include>
+                       <include>**/*.html</include>
+                       <include>**/*.js</include>
+                   </includes>
+               </resource>
+
+               <resource>
+                   <directory>src/main/resources/</directory>
+                   <filtering>true</filtering>
+                   <includes>
+                       <include>**/*.xml</include>
+                       <include>**/*.html</include>
+                       <include>**/*.js</include>
+                   </includes>
+               </resource>
+           </resources>
+       </build>
+       <profiles>
+           <profile>
+               <id>product</id>
+               <activation>
+                   <activeByDefault>true</activeByDefault>
+               </activation>
+               <properties>
+                   <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
+                   <jdbc.url>jdbc:mysql://rdscj3sdp46lfffap6e1.mysql.rds.aliyuncs.com:3306/daokong</jdbc.url>
+                   <jdbc.username>daokong</jdbc.username>
+                   <jdbc.password>daokong@2017</jdbc.password>
+                   <server.port>8011</server.port>
+               </properties>
+           </profile>
+       </profiles>-->
+
 </project>

@@ -9,8 +9,13 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Msater Zg on 2017/8/16.
@@ -98,5 +103,25 @@ public class ManPowerTaskController {
         return result;
     }
 
-
+    @PostMapping(value = "/uploadImage")
+    @ApiOperation(value = "uploadImage", notes = "改变状态")
+    @ApiImplicitParams({
+    })
+    public String uploadImage(@RequestParam("file") MultipartFile file) {
+        long str = System.currentTimeMillis();
+        if (!file.isEmpty()) {
+            String filePath = "C:/dummyPath/" + str + ""
+                    + file.getOriginalFilename();//获取服务器的绝对路径+项目相对路径head/图片原名
+            System.out.println(filePath);
+            try {
+                file.transferTo(new File(filePath));//讲客户端文件传输到服务器端
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+/*            int position = filePath.lastIndexOf("/");//
+            System.out.println(position);
+            String head = filePath.substring(position + 1);//获取真正的图片名字，如“1.png”*/
+        }
+        return str + file.getOriginalFilename();
+    }
 }

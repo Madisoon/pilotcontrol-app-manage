@@ -167,8 +167,14 @@ public class ManPowerTaskService implements IManPowerTaskService {
             String updateMark = "UPDATE sys_user a SET a.user_mark =  a.user_mark+" + Integer.parseInt(taskStartMark) + "  " +
                     "WHERE a.user_loginname = '" + taskCreate + "'";
             baseDao.execute(updateMark);
-        } else {
+        } else if ("0".equals(orderStatus)) {
             // 反馈的逻辑
+            String content = orderDataObject.getString("content");
+            insertPowerData = "INSERT INTO guidance_manpower_feedback (manpower_id, manpower_content) VALUES (?,?)";
+            updatePowerData = "UPDATE guidance_manpower_task SET task_check_status = '0'  WHERE id = ? ";
+            result = baseDao.execute(insertPowerData, new String[]{id, content});
+            baseDao.execute(updatePowerData, new String[]{id});
+        } else {
             String content = orderDataObject.getString("content");
             insertPowerData = "INSERT INTO guidance_manpower_feedback (manpower_id, manpower_content) VALUES (?,?)";
             result = baseDao.execute(insertPowerData, new String[]{id, content});

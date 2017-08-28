@@ -70,7 +70,6 @@ public class UserController {
                              @RequestParam("userCorpus") String userCorpus,
                              @RequestParam("userConfig") String userConfig,
                              HttpServletRequest request) {
-        System.out.println(webTokenUtil.getUserNameByToken(request));
         String reuslt = iUserService.updateUser(userData, userCorpus, userConfig).toString();
         return reuslt;
     }

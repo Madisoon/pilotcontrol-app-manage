@@ -1,3 +1,4 @@
+/*
 package com.syx.pilotcontrol.utils.scheduledtasks;
 
 import com.alibaba.fastjson.JSON;
@@ -11,15 +12,19 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.HashMap;
 import java.util.Map;
 
+*/
 /**
  * Created by Msater Zg on 2017/8/4.
- */
-public class checkSysNumber {
+ *//*
+
+public class CheckSysNumber {
     @Autowired
     BaseDao baseDao;
 
     @Scheduled(cron = "0 0 24 * * ?")
-    /*@Scheduled(fixedRate = 1000 * 60 * 10)*/
+    */
+/*@Scheduled(fixedRate = 1000 * 60 * 10)*//*
+
     public void getDataNumber() {
         String getAllNumber = "SELECT a.id,a.number_name,a.number_password,b.config_type " +
                 "FROM guidance_number a  " +
@@ -47,3 +52,4 @@ public class checkSysNumber {
 
     }
 }
+*/
