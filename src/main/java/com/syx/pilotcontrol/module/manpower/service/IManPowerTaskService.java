@@ -11,7 +11,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 public interface IManPowerTaskService {
     public JSONObject insertManPower(String manPowerData);
 
-    public JSONObject getAllManPower(String userLoginName, String type, String pageSize, String pageNumber);
+    public JSONObject getAllManPower(String userLoginName, String type, String pilotControlType, String pageSize, String pageNumber);
 
 
     public JSONObject changeOrderStatus(String orderId, String orderStatus);

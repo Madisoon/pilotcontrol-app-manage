@@ -142,33 +142,10 @@
     </dependencies>
 
     <build>
-        <!--配置打包的名称-->
-        <finalName>pilotcontrol-app-manage</finalName>
-        <plugins>
-            <!--spring boot maven 打包插件-->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <dependencies>
-                    <!-- spring热部署 -->
-                    <dependency>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>springloaded</artifactId>
-                        <version>1.2.5.RELEASE</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
-    <!--<build>
-           &lt;!&ndash;配置打包的名称&ndash;&gt;
+           <!--配置打包的名称-->
            <finalName>daokong-app-manage</finalName>
            <plugins>
-               &lt;!&ndash;spring boot maven 打包插件&ndash;&gt;
+               <!--spring boot maven 打包插件-->
                <plugin>
                    <groupId>org.springframework.boot</groupId>
                    <artifactId>spring-boot-maven-plugin</artifactId>
@@ -177,7 +154,7 @@
                    <groupId>org.springframework.boot</groupId>
                    <artifactId>spring-boot-maven-plugin</artifactId>
                    <dependencies>
-                       &lt;!&ndash; spring热部署 &ndash;&gt;
+                       <!-- spring热部署 -->
                        <dependency>
                            <groupId>org.springframework</groupId>
                            <artifactId>springloaded</artifactId>
@@ -222,6 +199,6 @@
                    <server.port>8011</server.port>
                </properties>
            </profile>
-       </profiles>-->
+       </profiles>
 
 </project>

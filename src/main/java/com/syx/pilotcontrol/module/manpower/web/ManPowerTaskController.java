@@ -47,10 +47,11 @@ public class ManPowerTaskController {
             JSONObject params = JSONObject.parseObject(param);
             String userLoginName = params.getString("userLoginName");
             String type = params.getString("type");
+            String pilotControlType = params.getString("pilotControlType");
             String pageSize = params.getString("pageSize");
             String pageNumber = params.getString("pageNumber");
             String result = "";
-            result = iManPowerTaskService.getAllManPower(userLoginName, type, pageSize, pageNumber).toString();
+            result = iManPowerTaskService.getAllManPower(userLoginName, type, pilotControlType, pageSize, pageNumber).toString();
             return result;
         } catch (Exception ex) {
             ex.printStackTrace();
