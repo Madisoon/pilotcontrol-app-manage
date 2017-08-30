@@ -69,4 +69,14 @@ public class OtherConfigController {
         String result = iOtherConfigService.getOtherConfigByType(otherType).toString();
         return result;
     }
+
+    @GetMapping(value = "/getOtherInfoById")
+    @ApiOperation(value = "getOtherInfoById", notes = "根据id获取其他配置的详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "typeId", value = "配置id", required = true, dataType = "STRING")
+    })
+    public String getOtherInfoById(@RequestParam("typeId") String typeId) {
+        String result = iOtherConfigService.getOtherInfoById(typeId).toString();
+        return result;
+    }
 }

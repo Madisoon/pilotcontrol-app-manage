@@ -61,9 +61,9 @@ public class ManPowerTaskService implements IManPowerTaskService {
                     "ORDER BY a.task_time DESC " + SqlEasy.limitPage(pageSize, pageNumber) + ") a  " +
                     "LEFT JOIN guidance_manpower_feedback b " +
                     "ON a.id = b.manpower_id) a GROUP BY a.id ORDER BY a.task_time DESC";
-
             jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(getAllMan, new String[]{userLoginName}));
         } else {
+            // 其他的数据
             String getAllMan = "SELECT a.*,GROUP_CONCAT(a.manpower_content) AS manpower_contents, " +
                     "GROUP_CONCAT(a.manpower_time) AS manpower_times  " +
                     "FROM (SELECT * FROM (SELECT * FROM guidance_manpower_task a  " +
@@ -71,7 +71,38 @@ public class ManPowerTaskService implements IManPowerTaskService {
                     "ORDER BY a.task_time DESC " + SqlEasy.limitPage(pageSize, pageNumber) + ") a  " +
                     "LEFT JOIN guidance_manpower_feedback b " +
                     "ON a.id = b.manpower_id) a GROUP BY a.id ORDER BY a.task_time DESC";
-            jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(getAllMan, new String[]{userLoginName}));
+            JSONArray jsonArrayData = (JSONArray) JSON.toJSON(baseDao.rawQuery(getAllMan, new String[]{userLoginName}));
+            if (jsonArrayData != null) {
+                for (int i = 0, jsonArrayLen = jsonArrayData.size(); i < jsonArrayLen; i++) {
+                    JSONObject jsonObject = jsonArrayData.getJSONObject(i);
+                    String taskType = jsonObject.getString("task_type");
+                    String taskTypeSql = "SELECT * FROM guidance_other_config WHERE id = ?";
+                    JSONObject jsonObjectType = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(taskTypeSql, new String[]{taskType}));
+                    String otherSite = jsonObjectType.getString("other_site");
+                    String otherType = jsonObjectType.getString("other_type");
+                    String otherTypeName = "";
+                    switch (otherType) {
+                        case "1":
+                            otherTypeName = "阅读量";
+                            break;
+                        case "2":
+                            otherTypeName = "发表评论";
+                            break;
+                        case "3":
+                            otherTypeName = "评论点赞";
+                            break;
+                        case "4":
+                            otherTypeName = "文章收藏";
+                            break;
+                        default:
+                            otherTypeName = "数据错误";
+                            break;
+                    }
+                    jsonObject.put("task_type_name", otherSite + "-" + otherTypeName);
+                    jsonArray.add(jsonObject);
+                }
+            }
+
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", jsonArray);
@@ -122,15 +153,46 @@ public class ManPowerTaskService implements IManPowerTaskService {
         }
         getManTypeAllList.add(" ) a GROUP BY a.id ORDER BY a.task_time ");
         String getManTypeAll = StringUtils.join(getManTypeAllList, "");
-        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(getManType));
+        JSONArray jsonArrayData = (JSONArray) JSON.toJSON(baseDao.rawQuery(getManType));
         JSONArray jsonArrayAll = (JSONArray) JSON.toJSON(baseDao.rawQuery(getManTypeAll));
+        JSONArray jsonArray = new JSONArray();
+        if (jsonArrayData != null) {
+            for (int i = 0, jsonArrayLen = jsonArrayData.size(); i < jsonArrayLen; i++) {
+                JSONObject jsonObject = jsonArrayData.getJSONObject(i);
+                String taskType = jsonObject.getString("task_type");
+                String taskTypeSql = "SELECT * FROM guidance_other_config WHERE id = ?";
+                JSONObject jsonObjectType = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(taskTypeSql, new String[]{taskType}));
+                String otherSite = jsonObjectType.getString("other_site");
+                String otherType = jsonObjectType.getString("other_type");
+                String otherTypeName = "";
+                switch (otherType) {
+                    case "1":
+                        otherTypeName = "阅读量";
+                        break;
+                    case "2":
+                        otherTypeName = "发表评论";
+                        break;
+                    case "3":
+                        otherTypeName = "评论点赞";
+                        break;
+                    case "4":
+                        otherTypeName = "文章收藏";
+                        break;
+                    default:
+                        otherTypeName = "数据错误";
+                        break;
+                }
+                jsonObject.put("task_type_name", otherSite + "-" + otherTypeName);
+                jsonArray.add(jsonObject);
+            }
+        }
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("data", jsonArray);
         if (jsonArrayAll == null) {
             jsonObject.put("total", 0);
         } else {
             jsonObject.put("total", jsonArrayAll.size());
         }
-        jsonObject.put("data", jsonArray);
         return jsonObject;
     }
 

@@ -73,4 +73,13 @@ public class OtherConfigService implements IOtherConfigService {
         jsonObject.put("data", jsonArray);
         return jsonObject;
     }
+
+    @Override
+    public JSONObject getOtherInfoById(String typeId) {
+        String getInformationSql = "SELECT * FROM guidance_other_config WHERE id = ?";
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(getInformationSql, new String[]{typeId}));
+        JSONObject jsonObjectReturn = new JSONObject();
+        jsonObjectReturn.put("data", jsonObject);
+        return jsonObjectReturn;
+    }
 }

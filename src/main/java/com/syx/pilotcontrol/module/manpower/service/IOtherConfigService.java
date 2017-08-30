@@ -15,4 +15,6 @@ public interface IOtherConfigService {
     public JSONObject deleteOtherConfig(String configId);
 
     public JSONObject updateOtherConfig(String otherData, String otherId);
+
+    public JSONObject getOtherInfoById(String typeId);
 }
