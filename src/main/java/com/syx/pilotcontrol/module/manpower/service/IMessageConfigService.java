@@ -11,4 +11,14 @@ public interface IMessageConfigService {
     public JSONObject updateMessageConfig(String messageData, String messageId);
 
     public JSONObject deleteMessageConfig(String messageId);
+
+    public JSONObject getMessageConfig();
+
+    public JSONObject addPlan(String planData);
+
+    public JSONObject getAllPlan();
+
+    public JSONObject deletePlan(String idData);
+
+    public JSONObject updatePlan(String planData, String id);
 }

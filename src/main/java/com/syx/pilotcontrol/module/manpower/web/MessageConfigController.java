@@ -48,4 +48,39 @@ public class MessageConfigController {
         String result = iMessageConfigService.deleteMessageConfig(messageId).toString();
         return result;
     }
+
+    @PostMapping(value = "/getMessageConfig")
+    @ApiOperation(value = "getMessageConfig", notes = "得到所有的信息配置")
+    public String getMessageConfig() {
+        String result = iMessageConfigService.getMessageConfig().toString();
+        return result;
+    }
+
+    @RequestMapping(value = "/addPlan", method = RequestMethod.PUT)
+    @ApiOperation(value = "addPlan", notes = "增加计划任务")
+    public String addPlan(@RequestParam("planData") String planData) {
+        String result = iMessageConfigService.addPlan(planData).toString();
+        return result;
+    }
+
+    @RequestMapping(value = "/getAllPlan", method = RequestMethod.POST)
+    @ApiOperation(value = "addPlan", notes = "得到所有的计划任务")
+    public String getAllPlan() {
+        String result = iMessageConfigService.getAllPlan().toString();
+        return result;
+    }
+
+    @RequestMapping(value = "/deletePlan", method = RequestMethod.POST)
+    @ApiOperation(value = "deletePlan", notes = "根据id删除计划任务")
+    public String deletePlan(@RequestParam("idData") String idData) {
+        String result = iMessageConfigService.deletePlan(idData).toString();
+        return result;
+    }
+
+    @RequestMapping(value = "/updatePlan", method = RequestMethod.POST)
+    @ApiOperation(value = "updatePlan", notes = "根据id修改计划任务")
+    public String updatePlan(@RequestParam("planData") String planData, @RequestParam("id") String id) {
+        String result = iMessageConfigService.updatePlan(planData, id).toString();
+        return result;
+    }
 }
