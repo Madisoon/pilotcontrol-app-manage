@@ -5,16 +5,17 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fantasi.common.db.dao.BaseDao;
-import com.sun.org.apache.regexp.internal.RE;
 import com.syx.pilotcontrol.module.manpower.service.IManPowerTaskService;
+import com.syx.pilotcontrol.utils.DifTimeGet;
+import com.syx.pilotcontrol.utils.NumberInfoPost;
 import com.syx.pilotcontrol.utils.SqlEasy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Master  Zg on 2016/12/12.
@@ -24,6 +25,10 @@ import java.util.Map;
 public class ManPowerTaskService implements IManPowerTaskService {
     @Autowired
     BaseDao baseDao;
+    @Autowired
+    DifTimeGet difTimeGet;
+    @Autowired
+    NumberInfoPost numberInfoPost;
 
     @Override
     public JSONObject insertManPower(String manPowerData) {
@@ -33,6 +38,71 @@ public class ManPowerTaskService implements IManPowerTaskService {
         String taskCreate = manPower.getString("task_create");
         manPower.put("id", id);
         String sqlInsert = SqlEasy.insertObject(manPower.toJSONString(), "guidance_manpower_task");
+
+        String taskType = manPower.getString("task_type");
+        String taskDaoKongType = manPower.getString("task_daokong_type");
+        String taskSelectType = "1";
+
+        if ("0".equals(taskDaoKongType)) {
+            taskSelectType = "4";
+        } else {
+            switch (taskType) {
+                case "1":
+                    taskSelectType = "1";
+                    break;
+                case "2":
+                    taskSelectType = "1";
+                    break;
+                case "3":
+                    taskSelectType = "1";
+                    break;
+                case "4":
+                    taskSelectType = "1";
+                    break;
+                case "5":
+                    taskSelectType = "1";
+                    break;
+                case "6":
+                    taskSelectType = "2";
+                    break;
+                case "8":
+                    taskSelectType = "2";
+                    break;
+                case "9":
+                    taskSelectType = "2";
+                    break;
+                case "10":
+                    taskSelectType = "2";
+                    break;
+                case "11":
+                    taskSelectType = "2";
+                    break;
+                default:
+                    taskSelectType = "3";
+                    break;
+            }
+        }
+
+
+        String messagePeople = "SELECT * FROM guidance_message_people " +
+                "WHERE people_status = '1' AND people_config LIKE '%?%'  ";
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(messagePeople, new String[]{taskSelectType}));
+
+        if (jsonArray != null) {
+            int jsonLen = jsonArray.size();
+            for (int i = 0; i < jsonLen; i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String peopleNumber = jsonObject.getString("people_number");
+                String peopleId = jsonObject.getString("id");
+                String time = getPostTime(peopleId);
+                boolean flag = difTimeGet.judgeTimeInterval(time, new Date());
+                if (flag) {
+                    // 开始发送信息
+                    numberInfoPost.sendMsgByYunPian("下订单了", peopleNumber);
+                }
+            }
+        }
+
         int result = baseDao.execute(sqlInsert);
         String updateMark = "UPDATE sys_user a SET a.user_mark =  a.user_mark-" + Integer.parseInt(realMark, 10) + "  " +
                 "WHERE a.user_loginname = '" + taskCreate + "'";
@@ -256,6 +326,14 @@ public class ManPowerTaskService implements IManPowerTaskService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", result);
         return jsonObject;
+    }
+
+    public String getPostTime(String peopleId) {
+        String weekDate = difTimeGet.getWeekTime(new Date());
+        String sql = "SELECT * FROM guidance_message_people a LEFT JOIN sys_plan b " +
+                "ON a.people_plan = b.id WHERE a.id = ? ";
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(sql, new String[]{peopleId}));
+        return jsonObject.getString(weekDate);
     }
 
     /*    public static void InsertSort(int[] arr) {
