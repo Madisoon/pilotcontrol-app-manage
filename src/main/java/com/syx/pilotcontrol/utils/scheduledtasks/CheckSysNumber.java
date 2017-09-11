@@ -23,7 +23,7 @@ public class CheckSysNumber {
     BaseDao baseDao;
     private final String PILCONTROLURL = "http://121.199.4.149:18080/api/verify";
 
-    @Scheduled(cron = "0 0/50 * * * ?")
+    @Scheduled(cron = "0 0/60 * * * ?")
     /*@Scheduled(fixedRate = 1000 * 60*30)*/
 
     public void getDataNumber() {
@@ -44,12 +44,8 @@ public class CheckSysNumber {
             map.put("account", numberName);
             map.put("password", numberPwd);
             JSONObject jsonObjectReturn = HttpClientUtil.sendPost(PILCONTROLURL, map);
-            System.out.println(numberType);
-            System.out.println(numberName);
-            System.out.println(numberPwd);
-            System.out.println(jsonObjectReturn);
             String value = jsonObjectReturn.getString("status");
-            System.out.println("开始判断");
+
             if (!"1".equals(value)) {
                 String updateSql = "UPDATE guidance_number SET number_check_status = ? WHERE id = ? ";
                 baseDao.execute(updateSql, new String[]{"0", numberId});

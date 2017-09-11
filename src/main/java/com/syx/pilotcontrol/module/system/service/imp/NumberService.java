@@ -79,7 +79,6 @@ public class NumberService implements INumberService {
                         "ORDER BY a.number_time DESC " + SqlEasy.limitPage(pageSize, pageNumber) + "";
             }
         }
-        System.out.println(sqlNumber);
         Map<String, String> map = baseDao.rawQueryForMap(sqlTotal);
         JSONObject jsonObject = new JSONObject();
         List<Map<String, String>> listData = baseDao.rawQuery(sqlNumber);
