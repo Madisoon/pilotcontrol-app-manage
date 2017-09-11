@@ -55,7 +55,7 @@ public class NumberService implements INumberService {
     @Override
     public JSONObject getAllNumber(String configId, String numberType, String numberCreate, String pageSize, String pageNumber) {
         // 获取数据的数量的sql
-        String sqlTotal = new String();
+        String sqlTotal = "";
         String sqlNumber = "";
         if ("1".equals(numberType)) {
             // 获取所有的系统的账号
@@ -79,11 +79,16 @@ public class NumberService implements INumberService {
                         "ORDER BY a.number_time DESC " + SqlEasy.limitPage(pageSize, pageNumber) + "";
             }
         }
+        System.out.println(sqlNumber);
         Map<String, String> map = baseDao.rawQueryForMap(sqlTotal);
         JSONObject jsonObject = new JSONObject();
         List<Map<String, String>> listData = baseDao.rawQuery(sqlNumber);
         JSONArray jsonArray = (JSONArray) JSON.toJSON(listData);
-        jsonObject.put("total", map.get("total"));
+        if (map == null) {
+            jsonObject.put("total", 0);
+        } else {
+            jsonObject.put("total", map.get("total"));
+        }
         jsonObject.put("data", jsonArray);
         return jsonObject;
     }

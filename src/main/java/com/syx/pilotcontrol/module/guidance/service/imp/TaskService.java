@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Msater Zg on 2017/6/29.
@@ -20,6 +21,8 @@ import java.util.Map;
 @Service
 public class TaskService implements ITaskService {
     private final String pilcontrolUrl = "http://121.199.4.149:18080/api/guide";
+
+    private final String PILCONTROLURLACCOUNT = "http://121.199.4.149:18080/api/verify";
 
     @Autowired
     BaseDao baseDao;
@@ -80,6 +83,7 @@ public class TaskService implements ITaskService {
         int numberSuccess = 0;
         for (int i = 0; i < Integer.parseInt(taskNumber, 10); i++) {
             int randomNumber = (int) (Math.random() * jsonArrayNumberLen);
+            System.out.println(randomNumber);
             int randomContext = (int) (Math.random() * taskContextsLen);
             JSONObject jsonObjectNumber = jsonArrayNumber.getJSONObject(randomNumber);
             Map<String, String> mapPost = new HashMap<>();
@@ -89,9 +93,15 @@ public class TaskService implements ITaskService {
             mapPost.put("url", taskUrl);
             mapPost.put("title", taskTitle);
             mapPost.put("content", taskContexts[randomContext]);
+            // 增加时间的间隔的判断
+            try {
+                TimeUnit.SECONDS.sleep(Integer.parseInt(intervalTime, 10));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             JSONObject jsonObjectSuccess = HttpClientUtil.sendPost(pilcontrolUrl, mapPost);
+            System.out.println(jsonObjectSuccess.toString());
             String valueSuccess = jsonObjectSuccess.getString("status");
-            System.out.println(jsonObjectSuccess);
             if (valueSuccess.equals("1")) {
                 numberSuccess++;
             }
@@ -149,5 +159,12 @@ public class TaskService implements ITaskService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", result);
         return jsonObject;
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 10; i++) {
+            int randomNumber = (int) (Math.random() * 10);
+            System.out.println(randomNumber);
+        }
     }
 }

@@ -1,4 +1,4 @@
-/*
+
 package com.syx.pilotcontrol.utils.scheduledtasks;
 
 import com.alibaba.fastjson.JSON;
@@ -8,22 +8,23 @@ import com.fantasi.common.db.dao.BaseDao;
 import com.syx.pilotcontrol.utils.HttpClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-*/
+
 /**
  * Created by Msater Zg on 2017/8/4.
- *//*
-
+ */
+@Component
 public class CheckSysNumber {
     @Autowired
     BaseDao baseDao;
+    private final String PILCONTROLURL = "http://121.199.4.149:18080/api/verify";
 
-    @Scheduled(cron = "0 0 24 * * ?")
-    */
-/*@Scheduled(fixedRate = 1000 * 60 * 10)*//*
+    @Scheduled(cron = "0 0/50 * * * ?")
+    /*@Scheduled(fixedRate = 1000 * 60*30)*/
 
     public void getDataNumber() {
         String getAllNumber = "SELECT a.id,a.number_name,a.number_password,b.config_type " +
@@ -42,8 +43,13 @@ public class CheckSysNumber {
             map.put("url", numberType);
             map.put("account", numberName);
             map.put("password", numberPwd);
-            JSONObject jsonObjectReturn = HttpClientUtil.sendPost("", map);
+            JSONObject jsonObjectReturn = HttpClientUtil.sendPost(PILCONTROLURL, map);
+            System.out.println(numberType);
+            System.out.println(numberName);
+            System.out.println(numberPwd);
+            System.out.println(jsonObjectReturn);
             String value = jsonObjectReturn.getString("status");
+            System.out.println("开始判断");
             if (!"1".equals(value)) {
                 String updateSql = "UPDATE guidance_number SET number_check_status = ? WHERE id = ? ";
                 baseDao.execute(updateSql, new String[]{"0", numberId});
@@ -52,4 +58,4 @@ public class CheckSysNumber {
 
     }
 }
-*/
+

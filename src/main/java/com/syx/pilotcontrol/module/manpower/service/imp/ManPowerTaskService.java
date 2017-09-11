@@ -85,8 +85,8 @@ public class ManPowerTaskService implements IManPowerTaskService {
 
 
         String messagePeople = "SELECT * FROM guidance_message_people " +
-                "WHERE people_status = '1' AND people_config LIKE '%?%'  ";
-        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(messagePeople, new String[]{taskSelectType}));
+                "WHERE people_status = '1' AND people_config LIKE '%" + taskSelectType + "%'  ";
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(messagePeople));
 
         if (jsonArray != null) {
             int jsonLen = jsonArray.size();
@@ -98,7 +98,7 @@ public class ManPowerTaskService implements IManPowerTaskService {
                 boolean flag = difTimeGet.judgeTimeInterval(time, new Date());
                 if (flag) {
                     // 开始发送信息
-                    numberInfoPost.sendMsgByYunPian("下订单了", peopleNumber);
+                    System.out.println(numberInfoPost.sendMsgByYunPian("您的验证码是！", peopleNumber));
                 }
             }
         }
