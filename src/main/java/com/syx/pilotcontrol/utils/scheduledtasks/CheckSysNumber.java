@@ -13,19 +13,14 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-
-/**
- * Created by Msater Zg on 2017/8/4.
- */
 @Component
 public class CheckSysNumber {
     @Autowired
     BaseDao baseDao;
     private final String PILCONTROLURL = "http://121.199.4.149:18080/api/verify";
 
-    @Scheduled(cron = "0 0/60 * * * ?")
-    /*@Scheduled(fixedRate = 1000 * 60*30)*/
-
+    /*@Scheduled(cron = "0 0/60 * * * ?")*/
+    @Scheduled(fixedRate = 1000 * 60 * 30)
     public void getDataNumber() {
         String getAllNumber = "SELECT a.id,a.number_name,a.number_password,b.config_type " +
                 "FROM guidance_number a  " +
@@ -45,7 +40,6 @@ public class CheckSysNumber {
             map.put("password", numberPwd);
             JSONObject jsonObjectReturn = HttpClientUtil.sendPost(PILCONTROLURL, map);
             String value = jsonObjectReturn.getString("status");
-
             if (!"1".equals(value)) {
                 String updateSql = "UPDATE guidance_number SET number_check_status = ? WHERE id = ? ";
                 baseDao.execute(updateSql, new String[]{"0", numberId});
