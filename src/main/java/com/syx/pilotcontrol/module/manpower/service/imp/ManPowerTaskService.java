@@ -13,7 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +34,8 @@ public class ManPowerTaskService implements IManPowerTaskService {
 
     @Override
     public JSONObject insertManPower(String manPowerData) {
-        long id = System.currentTimeMillis();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        String id = simpleDateFormat.format(new Date());
         JSONObject manPower = JSONObject.parseObject(manPowerData);
         String realMark = manPower.getString("task_start_mark");
         String taskCreate = manPower.getString("task_create");
@@ -232,6 +235,7 @@ public class ManPowerTaskService implements IManPowerTaskService {
                 String taskType = jsonObject.getString("task_type");
                 String taskTypeSql = "SELECT * FROM guidance_other_config WHERE id = ?";
                 JSONObject jsonObjectType = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(taskTypeSql, new String[]{taskType}));
+                System.out.println(jsonObjectType);
                 String otherSite = jsonObjectType.getString("other_site");
                 String otherType = jsonObjectType.getString("other_type");
                 String otherTypeName = "";
@@ -335,7 +339,6 @@ public class ManPowerTaskService implements IManPowerTaskService {
         JSONObject jsonObject = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(sql, new String[]{peopleId}));
         return jsonObject.getString(weekDate);
     }
-
     /*    public static void InsertSort(int[] arr) {
         int i, j;
         int n = arr.length;

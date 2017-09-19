@@ -39,6 +39,7 @@ public class TaskService implements ITaskService {
         String taskTitle = jsonObject.getString("task_title");
         String taskNumber = jsonObject.getString("task_number");
         String intervalTime = jsonObject.getString("interval_time");
+        String taskIntegration = jsonObject.getString("task_integration");
         String sqlGetNumber = "";
         // 获取到所有的账号和语料
         JSONArray jsonArrayNumber = new JSONArray();
@@ -106,6 +107,11 @@ public class TaskService implements ITaskService {
                 numberSuccess++;
             }
         }
+        // 执行完之后所消耗的分数
+        int taskRealNumber = (numberSuccess / Integer.parseInt(taskNumber)) * Integer.parseInt(taskIntegration);
+        String updateMark = "UPDATE sys_user a SET a.user_mark =  a.user_mark-" + taskRealNumber + "  " +
+                "WHERE a.user_loginname = '" + taskCreate + "'";
+        baseDao.execute(updateMark);
         String updateSql = "UPDATE guidance_task_main SET task_number_success = ? WHERE id = ? ";
         baseDao.execute(updateSql, new String[]{String.valueOf(numberSuccess), String.valueOf(taskId)});
         jsonObject.put("result", result);
