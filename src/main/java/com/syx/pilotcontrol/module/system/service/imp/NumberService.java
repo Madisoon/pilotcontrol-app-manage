@@ -45,7 +45,6 @@ public class NumberService implements INumberService {
     @Override
     public JSONObject updateNumber(String numberData, String numberId) {
         String updateSql = SqlEasy.updateObject(numberData, "guidance_number", "id = " + numberId);
-        System.out.println(updateSql);
         int result = baseDao.execute(updateSql);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", result);

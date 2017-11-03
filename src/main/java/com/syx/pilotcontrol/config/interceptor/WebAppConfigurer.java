@@ -18,6 +18,7 @@ public class WebAppConfigurer extends WebMvcConfigurerAdapter {
         // 拦截除
         registry.addInterceptor(new ApiInterceptor()).addPathPatterns("/**")
                 .excludePathPatterns("/system/judgeUser")
+                .excludePathPatterns("/guidance/uploadOrderFile")
                 .excludePathPatterns("/manpower/uploadImage");  //对来自/user/** 这个链接来的请求进行拦截
        /* registry.addInterceptor(new ExcludeInterceptor()).excludePathPatterns("/system/judgeUser");  //对来自/user*//** 这个链接来的请求进行拦截*/
         super.addInterceptors(registry);

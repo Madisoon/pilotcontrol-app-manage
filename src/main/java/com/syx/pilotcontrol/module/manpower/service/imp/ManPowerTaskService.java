@@ -235,7 +235,6 @@ public class ManPowerTaskService implements IManPowerTaskService {
                 String taskType = jsonObject.getString("task_type");
                 String taskTypeSql = "SELECT * FROM guidance_other_config WHERE id = ?";
                 JSONObject jsonObjectType = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(taskTypeSql, new String[]{taskType}));
-                System.out.println(jsonObjectType);
                 String otherSite = jsonObjectType.getString("other_site");
                 String otherType = jsonObjectType.getString("other_type");
                 String otherTypeName = "";

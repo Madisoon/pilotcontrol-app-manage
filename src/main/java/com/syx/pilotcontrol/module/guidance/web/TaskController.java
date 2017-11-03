@@ -8,12 +8,14 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Msater Zg on 2017/6/29.
@@ -29,11 +31,15 @@ public class TaskController {
     @RequestMapping(value = "/insertTask", method = RequestMethod.PUT)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "taskInfo", value = "任务的信息", required = true, dataType = "STRING"),
-            @ApiImplicitParam(name = "taskContext", value = "语料信息", required = true, dataType = "STRING")
+            @ApiImplicitParam(name = "taskContext", value = "语料信息", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "remarkContent", value = "语料信息", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "daokongTypeOrder", value = "语料信息", required = true, dataType = "STRING")
     })
     public String insertTask(@RequestParam("taskInfo") String taskInfo,
-                             @RequestParam("taskContext") String taskContext) {
-        iTaskService.insertTask(taskInfo, taskContext);
+                             @RequestParam("taskContext") String taskContext,
+                             @RequestParam("remarkContent") String remarkContent,
+                             @RequestParam("taskContext") String daokongTypeOrder) {
+        iTaskService.insertTask(taskInfo, taskContext, remarkContent, daokongTypeOrder);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 1);
         String result = jsonObject.toString();
@@ -88,5 +94,37 @@ public class TaskController {
     public String deleteTaskById(@RequestParam("taskId") String taskId) {
         String result = iTaskService.deleteTaskById(taskId).toString();
         return result;
+    }
+
+    @ApiOperation(value = "getSinaRemark", notes = "获取评论")
+    @RequestMapping(value = "/getSinaRemark", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "url", value = "地址", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "host", value = "标识", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "page", value = "页数", required = true, dataType = "STRING")
+    })
+    public String getSinaRemark(@RequestParam("urlPost") String url,
+                                @RequestParam("host") String host,
+                                @RequestParam("page") String page) {
+        String result = iTaskService.getSinaRemark(url, host, page).toString();
+        return result;
+    }
+
+    @PostMapping(value = "/uploadOrderFile")
+    public String uploadHead(HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException {
+        System.out.println("执行");
+        if (!file.isEmpty()) {
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            String str = sdf.format(date);
+            String filePath = request.getSession().getServletContext().getRealPath("/") + str + ""
+                    + file.getOriginalFilename();//获取服务器的绝对路径+项目相对路径head/图片原名
+            file.transferTo(new File(filePath));//讲客户端文件传输到服务器端
+           /* int position = filePath.lastIndexOf("/");//
+            System.out.println(position);
+            String head = filePath.substring(position + 1);//获取真正的图片名字，如“1.png”*/
+            return str + file.getOriginalFilename();
+        }
+        return "";
     }
 }

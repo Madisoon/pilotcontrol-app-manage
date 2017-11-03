@@ -1,3 +1,4 @@
+/*
 
 package com.syx.pilotcontrol.utils.scheduledtasks;
 
@@ -19,7 +20,9 @@ public class CheckSysNumber {
     BaseDao baseDao;
     private final String PILCONTROLURL = "http://121.199.4.149:18080/api/verify";
 
-    /*@Scheduled(cron = "0 0/60 * * * ?")*/
+    */
+/*@Scheduled(cron = "0 0/60 * * * ?")*//*
+
     @Scheduled(fixedRate = 1000 * 60 * 30)
     public void getDataNumber() {
         String getAllNumber = "SELECT a.id,a.number_name,a.number_password,b.config_type " +
@@ -49,3 +52,4 @@ public class CheckSysNumber {
     }
 }
 
+*/

@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
  * Created by Msater Zg on 2017/6/29.
  */
 public interface ITaskService {
-    public JSONObject insertTask(String taskInfo, String taskContext);
+    public JSONObject insertTask(String taskInfo, String taskContext, String remarkContent, String daokongTypeOrder);
 
     public JSONArray getAllTaskByConfig(String configId, String userName);
 
@@ -16,4 +16,6 @@ public interface ITaskService {
     public JSONObject updateMonitorStatus(String taskId);
 
     public JSONObject deleteTaskById(String taskId);
+
+    public JSONObject getSinaRemark(String url, String host, String page);
 }

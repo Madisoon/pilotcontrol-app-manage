@@ -29,7 +29,7 @@ public class TaskService implements ITaskService {
 
     @Override
     @Async
-    public JSONObject insertTask(String taskInfo, String taskContext) {
+    public JSONObject insertTask(String taskInfo, String taskContext, String remarkContent, String daokongTypeOrder) {
         JSONObject jsonObject = JSON.parseObject(taskInfo);
         String configId = jsonObject.getString("config_id");
         String taskCreate = jsonObject.getString("task_create");
@@ -41,81 +41,146 @@ public class TaskService implements ITaskService {
         String intervalTime = jsonObject.getString("interval_time");
         String taskIntegration = jsonObject.getString("task_integration");
         String sqlGetNumber = "";
-        // 获取到所有的账号和语料
-        JSONArray jsonArrayNumber = new JSONArray();
-        if (numberTypes.length == 2) {
-            // 说明系统账号和账号一起使用
-            sqlGetNumber = "SELECT * FROM guidance_number a WHERE a.config_id = ? AND (a.number_create = ? OR a.number_sys_status = 1 OR a.number_open= 1 )";
-            jsonArrayNumber = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlGetNumber, new String[]{configId, taskCreate}));
-        } else {
-            String numberTypesItem = numberTypes[0];
-            if ("0".equals(numberTypesItem)) {
-                //只使用私有的账号
-                sqlGetNumber = "SELECT * FROM guidance_number a WHERE a.config_id = ? AND a.number_create = ?";
-                jsonArrayNumber = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlGetNumber, new String[]{configId, taskCreate}));
-            }
-            if ("1".equals(numberTypesItem)) {
-                sqlGetNumber = "SELECT * FROM guidance_number a WHERE a.config_id = ? AND ( a.number_sys_status = 1 OR a.number_open= 1 )";
-                jsonArrayNumber = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlGetNumber, new String[]{configId,}));
-            }
-        }
-        String[] taskContexts = taskContext.split(",");
-        int taskContextsLen = taskContexts.length;
         String insertTaskSql = SqlEasy.insertObject(taskInfo, "guidance_task_main");
         int result = baseDao.execute(insertTaskSql);
-        Map<String, String> map = baseDao.rawQueryForMap("SELECT id FROM guidance_task_main ORDER BY id  DESC  LIMIT 1");
-        int taskId = Integer.parseInt(map.get("id"));
-        if ("".equals(taskContext)) {
-            // 浏览帖子
-            int taskNumberInt = Integer.parseInt(taskNumber);
-            for (int i = 0; i < taskNumberInt; i++) {
-
+        System.out.println(remarkContent);
+        if (!"[]".equals(remarkContent)) {
+            System.out.println("执行");
+            JSONArray jsonArray = JSON.parseArray(remarkContent);
+            for (int i = 0, jsonArrayLen = jsonArray.size(); i < jsonArrayLen; i++) {
+                JSONObject jsonObjectRemark = jsonArray.getJSONObject(i);
+                System.out.println(jsonObjectRemark);
+                String content = jsonObjectRemark.getString("content");
+                String newsid = jsonObjectRemark.getString("newsid");
+                String channel = jsonObjectRemark.getString("channel");
+                String mid = jsonObjectRemark.getString("mid");
+                Map map = new HashMap();
+                /*host - 新闻站点的标识
+                url - 新闻的链接
+                times - 点赞的次数
+                channel - 从评论列表返回的json中确定的一个参数
+                mid - 从评论列表返回的json中确定的一个参数
+                proxy - 传入代理（可以为空）*/
+                map.put("host", "sina");
+                map.put("url", taskUrl);
+                map.put("times", taskNumber);
+                map.put("channel", channel);
+                map.put("mid", mid);
+                map.put("newsid", newsid);
+                HttpClientUtil.sendPost("http://121.199.4.149:18080/api/news/thumbUp", map);
             }
         } else {
-            // 回帖
-            for (int i = 0; i < taskContextsLen; i++) {
-                String insertCorpusSql = "INSERT INTO guidance_task_corpus (task_id, corpus_context) VALUES(?,?)";
-                baseDao.execute(insertCorpusSql, new String[]{String.valueOf(taskId), taskContexts[i]});
+            // 获取到所有的账号和语料
+            JSONArray jsonArrayNumber = new JSONArray();
+            if (numberTypes.length == 2) {
+                // 说明系统账号和账号一起使用
+                sqlGetNumber = "SELECT * FROM guidance_number a WHERE a.config_id = ? AND (a.number_create = ? OR a.number_sys_status = 1 OR a.number_open= 1 )";
+                jsonArrayNumber = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlGetNumber, new String[]{configId, taskCreate}));
+            } else {
+                String numberTypesItem = numberTypes[0];
+                if ("0".equals(numberTypesItem)) {
+                    //只使用私有的账号
+                    sqlGetNumber = "SELECT * FROM guidance_number a WHERE a.config_id = ? AND a.number_create = ?";
+                    jsonArrayNumber = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlGetNumber, new String[]{configId, taskCreate}));
+                }
+                if ("1".equals(numberTypesItem)) {
+                    sqlGetNumber = "SELECT * FROM guidance_number a WHERE a.config_id = ? AND ( a.number_sys_status = 1 OR a.number_open= 1 )";
+                    jsonArrayNumber = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlGetNumber, new String[]{configId,}));
+                }
+            }
+            String[] taskContexts = taskContext.split(",");
+            int taskContextsLen = taskContexts.length;
+            Map<String, String> map = baseDao.rawQueryForMap("SELECT id FROM guidance_task_main ORDER BY id  DESC  LIMIT 1");
+            int taskId = Integer.parseInt(map.get("id"));
+            if ("".equals(taskContext)) {
+                // 浏览帖子
+                int taskNumberInt = Integer.parseInt(taskNumber);
+                for (int i = 0; i < taskNumberInt; i++) {
+
+                }
+            } else {
+                // 回帖
+                for (int i = 0; i < taskContextsLen; i++) {
+                    String insertCorpusSql = "INSERT INTO guidance_task_corpus (task_id, corpus_context) VALUES(?,?)";
+                    baseDao.execute(insertCorpusSql, new String[]{String.valueOf(taskId), taskContexts[i]});
+                }
+            }
+            // 所有的系统的账号
+            int jsonArrayNumberLen = jsonArrayNumber.size();
+            // type 1代表发帖（需要标题和内容），2代表回帖 （只需要语料的内容）
+            int numberSuccess = 0;
+            for (int i = 0; i < Integer.parseInt(taskNumber, 10); i++) {
+                int randomNumber = (int) (Math.random() * jsonArrayNumberLen);
+                System.out.println(randomNumber);
+                int randomContext = (int) (Math.random() * taskContextsLen);
+                JSONObject jsonObjectNumber = jsonArrayNumber.getJSONObject(randomNumber);
+                Map<String, String> mapPost = new HashMap<>();
+                if ("1".equals(daokongTypeOrder)) {
+                    mapPost.put("type", taskType);
+                    mapPost.put("account", jsonObjectNumber.getString("number_name"));
+                    mapPost.put("password", jsonObjectNumber.getString("number_password"));
+                    mapPost.put("url", taskUrl);
+                    mapPost.put("title", taskTitle);
+                    mapPost.put("content", taskContexts[randomContext]);
+                    // 增加时间的间隔的判断
+                    try {
+                        TimeUnit.SECONDS.sleep(Integer.parseInt(intervalTime, 10));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    JSONObject jsonObjectSuccess = HttpClientUtil.sendPost(pilcontrolUrl, mapPost);
+                    System.out.println(jsonObjectSuccess.toString());
+                    String valueSuccess = jsonObjectSuccess.getString("status");
+                    if (valueSuccess.equals("1")) {
+                        numberSuccess++;
+                    }
+                    // 执行完之后所消耗的分数
+                    int taskRealNumber = (numberSuccess / Integer.parseInt(taskNumber)) * Integer.parseInt(taskIntegration);
+                    String updateMark = "UPDATE sys_user a SET a.user_mark =  a.user_mark-" + taskRealNumber + "  " +
+                            "WHERE a.user_loginname = '" + taskCreate + "'";
+                    baseDao.execute(updateMark);
+                    String updateSql = "UPDATE guidance_task_main SET task_number_success = ? WHERE id = ? ";
+                    baseDao.execute(updateSql, new String[]{String.valueOf(numberSuccess), String.valueOf(taskId)});
+                } else {
+                    mapPost.put("account", jsonObjectNumber.getString("number_name"));
+                    mapPost.put("password", jsonObjectNumber.getString("number_password"));
+                    System.out.println(jsonObjectNumber.getString("number_name"));
+                    System.out.println(jsonObjectNumber.getString("number_password"));
+                    mapPost.put("url", taskUrl);
+                    mapPost.put("host", "sina");
+                    mapPost.put("content", taskContexts[randomContext]);
+
+                /*host - 新闻站点的标识
+                url - 新闻的链接
+                account - 发表评论的账号
+                password - 发表评论账号的密码
+                content - 发表评论的内容
+                proxy - 使用的代理（可以为null）*/
+                    // 增加时间的间隔的判断
+                    try {
+                        TimeUnit.SECONDS.sleep(Integer.parseInt(intervalTime, 10));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    JSONObject jsonObjectSuccess = HttpClientUtil.sendPost("http://121.199.4.149:18080/api/news/reply", mapPost);
+                    System.out.println(jsonObjectSuccess.toString());
+                    String valueSuccess = jsonObjectSuccess.getString("status");
+                    if (valueSuccess.equals("1")) {
+                        numberSuccess++;
+                    }
+                    // 执行完之后所消耗的分数
+                    int taskRealNumber = (numberSuccess / Integer.parseInt(taskNumber)) * Integer.parseInt(taskIntegration);
+                    String updateMark = "UPDATE sys_user a SET a.user_mark =  a.user_mark-" + taskRealNumber + "  " +
+                            "WHERE a.user_loginname = '" + taskCreate + "'";
+                    baseDao.execute(updateMark);
+                    String updateSql = "UPDATE guidance_task_main SET task_number_success = ? WHERE id = ? ";
+                    baseDao.execute(updateSql, new String[]{String.valueOf(numberSuccess), String.valueOf(taskId)});
+                }
             }
         }
-        // 所有的系统的账号
-        int jsonArrayNumberLen = jsonArrayNumber.size();
-        // type 1代表发帖（需要标题和内容），2代表回帖 （只需要语料的内容）
-        int numberSuccess = 0;
-        for (int i = 0; i < Integer.parseInt(taskNumber, 10); i++) {
-            int randomNumber = (int) (Math.random() * jsonArrayNumberLen);
-            System.out.println(randomNumber);
-            int randomContext = (int) (Math.random() * taskContextsLen);
-            JSONObject jsonObjectNumber = jsonArrayNumber.getJSONObject(randomNumber);
-            Map<String, String> mapPost = new HashMap<>();
-            mapPost.put("type", taskType);
-            mapPost.put("account", jsonObjectNumber.getString("number_name"));
-            mapPost.put("password", jsonObjectNumber.getString("number_password"));
-            mapPost.put("url", taskUrl);
-            mapPost.put("title", taskTitle);
-            mapPost.put("content", taskContexts[randomContext]);
-            // 增加时间的间隔的判断
-            try {
-                TimeUnit.SECONDS.sleep(Integer.parseInt(intervalTime, 10));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            JSONObject jsonObjectSuccess = HttpClientUtil.sendPost(pilcontrolUrl, mapPost);
-            System.out.println(jsonObjectSuccess.toString());
-            String valueSuccess = jsonObjectSuccess.getString("status");
-            if (valueSuccess.equals("1")) {
-                numberSuccess++;
-            }
-        }
-        // 执行完之后所消耗的分数
-        int taskRealNumber = (numberSuccess / Integer.parseInt(taskNumber)) * Integer.parseInt(taskIntegration);
-        String updateMark = "UPDATE sys_user a SET a.user_mark =  a.user_mark-" + taskRealNumber + "  " +
-                "WHERE a.user_loginname = '" + taskCreate + "'";
-        baseDao.execute(updateMark);
-        String updateSql = "UPDATE guidance_task_main SET task_number_success = ? WHERE id = ? ";
-        baseDao.execute(updateSql, new String[]{String.valueOf(numberSuccess), String.valueOf(taskId)});
-        jsonObject.put("result", result);
-        return jsonObject;
+        JSONObject jsonObjectReturn = new JSONObject();
+        jsonObjectReturn.put("result", result);
+        return jsonObjectReturn;
     }
 
     @Override
@@ -167,10 +232,21 @@ public class TaskService implements ITaskService {
         return jsonObject;
     }
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 10; i++) {
-            int randomNumber = (int) (Math.random() * 10);
-            System.out.println(randomNumber);
-        }
+    @Override
+    public JSONObject getSinaRemark(String url, String host, String page) {
+        Map<String, String> mapPost = new HashMap<>();
+        mapPost.put("url", url);
+        mapPost.put("host", host);
+        mapPost.put("page", page);
+        JSONObject jsonObjectSuccess = HttpClientUtil.sendPost("http://121.199.4.149:18080/api/news/getReplyList", mapPost);
+        JSONArray jsonArray = (jsonObjectSuccess.getJSONObject("result")).getJSONArray("cmntlist");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("data", jsonArray);
+        return jsonObject;
     }
+/*
+    public static void main(String[] args) {
+        TaskService taskService = new TaskService();
+        taskService.getSinaNewsRemark("", "http://news.sina.com.cn/s/wh/2017-09-25/doc-ifymeswc9804017.shtml", "1");
+    }*/
 }

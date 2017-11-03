@@ -22,7 +22,6 @@ public class ButtonController {
     @Autowired
     IButtonService iButtonService;
 
-    /*@RequestMapping(value = "/insertButton", method = RequestMethod.GET)*/
     @PutMapping(value = "/insertButton")
     @ApiOperation(value = "insertButton", notes = "插入按钮属性")
     @ApiImplicitParams({
