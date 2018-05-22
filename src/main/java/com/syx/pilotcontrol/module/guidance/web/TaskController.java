@@ -38,7 +38,7 @@ public class TaskController {
     public String insertTask(@RequestParam("taskInfo") String taskInfo,
                              @RequestParam("taskContext") String taskContext,
                              @RequestParam("remarkContent") String remarkContent,
-                             @RequestParam("taskContext") String daokongTypeOrder) {
+                             @RequestParam("daokongTypeOrder") String daokongTypeOrder) {
         iTaskService.insertTask(taskInfo, taskContext, remarkContent, daokongTypeOrder);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 1);
@@ -112,7 +112,6 @@ public class TaskController {
 
     @PostMapping(value = "/uploadOrderFile")
     public String uploadHead(HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException {
-        System.out.println("执行");
         if (!file.isEmpty()) {
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -120,9 +119,6 @@ public class TaskController {
             String filePath = request.getSession().getServletContext().getRealPath("/") + str + ""
                     + file.getOriginalFilename();//获取服务器的绝对路径+项目相对路径head/图片原名
             file.transferTo(new File(filePath));//讲客户端文件传输到服务器端
-           /* int position = filePath.lastIndexOf("/");//
-            System.out.println(position);
-            String head = filePath.substring(position + 1);//获取真正的图片名字，如“1.png”*/
             return str + file.getOriginalFilename();
         }
         return "";

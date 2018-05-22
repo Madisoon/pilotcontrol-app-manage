@@ -94,4 +94,18 @@ public class UserController {
         String reuslt = iUserService.getSysUser(userName).toString();
         return reuslt;
     }
+
+    @RequestMapping(value = "/updatePartUser", method = RequestMethod.POST)
+    @ApiOperation(value = "updatePartUser", notes = "修改用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userData", value = "用户的信息", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "userLoginName", value = "登陆名", required = true, dataType = "STRING")
+    })
+    public String updatePartUser(@RequestParam("userData") String userData,
+                             @RequestParam("userCorpus") String userCorpus,
+                             @RequestParam("userConfig") String userConfig,
+                             HttpServletRequest request) {
+        String reuslt = iUserService.updateUser(userData, userCorpus, userConfig).toString();
+        return reuslt;
+    }
 }

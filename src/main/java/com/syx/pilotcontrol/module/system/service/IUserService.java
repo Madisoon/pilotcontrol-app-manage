@@ -21,4 +21,6 @@ public interface IUserService {
 
     public JSONObject getSysUser(String userName);
 
+    public JSONObject updatePartUser(String userData, String userLoginName);
+
 }

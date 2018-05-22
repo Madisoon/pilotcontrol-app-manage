@@ -8,11 +8,13 @@ import com.syx.pilotcontrol.config.JwtConfig;
 import com.syx.pilotcontrol.module.system.service.IConfigService;
 import com.syx.pilotcontrol.module.system.service.IUserService;
 import com.syx.pilotcontrol.utils.Md5Azdg;
+import com.syx.pilotcontrol.utils.SqlEasy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLClientInfoException;
 import java.util.*;
 
 /**
@@ -37,11 +39,12 @@ public class UserService implements IUserService {
         String userName = jsonObject.getString("user_name");
         String userPhone = jsonObject.getString("user_phone");
         String userRole = jsonObject.getString("user_role");
+        String userMark = jsonObject.getString("user_mark");
         String passWord = Md5Azdg.md5s(jsonObject.getString("user_password"));
-        String insertUserSql = "INSERT INTO sys_user (user_loginname, user_password, user_name, user_phone) VALUES(?,?,?,?)";
+        String insertUserSql = "INSERT INTO sys_user (user_loginname, user_password, user_name, user_phone, user_mark) VALUES(?,?,?,?,?)";
         String insertUserRole = "INSERT INTO  sys_role_user (role_id, user_id) VALUES(?,?)";
         String[] userCorpuss = userCorpus.split(",");
-        int result = baseDao.execute(insertUserSql, new String[]{userLoginname, passWord, userName, userPhone});
+        int result = baseDao.execute(insertUserSql, new String[]{userLoginname, passWord, userName, userPhone, userMark});
         baseDao.execute(insertUserRole, new String[]{userRole, userLoginname});
         for (int i = 0, userCorpussLen = userCorpuss.length; i < userCorpussLen; i++) {
             String insertCorpus = "INSERT INTO user_corpus_authority (user_loginname, corpus_id) VALUES(?,?)";
@@ -225,5 +228,12 @@ public class UserService implements IUserService {
         String getSql = "SELECT * FROM sys_user a WHERE a.user_loginname = ? ";
         JSONObject jsonObject = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(getSql, new String[]{userName}));
         return jsonObject;
+    }
+
+    @Override
+    public JSONObject updatePartUser(String userData, String userLoginName) {
+        String sqlUpdate = SqlEasy.updateObject(userData, "sys_user", " user_loginname = '" + userLoginName + "'  ");
+
+        return null;
     }
 }

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -101,7 +100,7 @@ public class ManPowerTaskService implements IManPowerTaskService {
                 boolean flag = difTimeGet.judgeTimeInterval(time, new Date());
                 if (flag) {
                     // 开始发送信息
-                    System.out.println(numberInfoPost.sendMsgByYunPian("您的验证码是！", peopleNumber));
+                    numberInfoPost.sendMsgByYunPian("有用户下单了,请及时完成！", peopleNumber);
                 }
             }
         }
@@ -208,7 +207,11 @@ public class ManPowerTaskService implements IManPowerTaskService {
         } else {
             getManTypeList.add("WHERE a.task_check_status = 0 OR a.task_check_status = 2 ");
         }
-        getManTypeList.add(" ) a GROUP BY a.id ORDER BY a.task_time DESC  " + SqlEasy.limitPage(pageSize, pageNumber) + " ");
+        if ("1".equals(type) || "3".equals(type)) {
+            getManTypeList.add(" ) a GROUP BY a.id ORDER BY a.task_end_time DESC  " + SqlEasy.limitPage(pageSize, pageNumber) + " ");
+        } else {
+            getManTypeList.add(" ) a GROUP BY a.id ORDER BY a.task_time DESC  " + SqlEasy.limitPage(pageSize, pageNumber) + " ");
+        }
         List getManTypeAllList = new ArrayList();
         String getManType = StringUtils.join(getManTypeList, "");
         getManTypeAllList.add("SELECT a.*,GROUP_CONCAT(a.manpower_content) AS manpower_contents ,  ");
@@ -224,9 +227,15 @@ public class ManPowerTaskService implements IManPowerTaskService {
         } else {
             getManTypeAllList.add("WHERE a.task_check_status = 0 OR a.task_check_status = 2 ");
         }
-        getManTypeAllList.add(" ) a GROUP BY a.id ORDER BY a.task_time ");
+        if ("1".equals(type) || "3".equals(type)) {
+            getManTypeAllList.add(" ) a GROUP BY a.id ORDER BY a.task_end_time DESC");
+        } else {
+            getManTypeAllList.add(" ) a GROUP BY a.id ORDER BY a.task_time DESC");
+        }
         String getManTypeAll = StringUtils.join(getManTypeAllList, "");
         JSONArray jsonArrayData = (JSONArray) JSON.toJSON(baseDao.rawQuery(getManType));
+        System.out.println(getManType);
+        System.out.println(getManTypeAll);
         JSONArray jsonArrayAll = (JSONArray) JSON.toJSON(baseDao.rawQuery(getManTypeAll));
         JSONArray jsonArray = new JSONArray();
         if (jsonArrayData != null) {
@@ -237,6 +246,8 @@ public class ManPowerTaskService implements IManPowerTaskService {
                 JSONObject jsonObjectType = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(taskTypeSql, new String[]{taskType}));
                 String otherSite = jsonObjectType.getString("other_site");
                 String otherType = jsonObjectType.getString("other_type");
+                System.out.println(otherSite);
+                System.out.println(otherType);
                 String otherTypeName = "";
                 switch (otherType) {
                     case "1":
@@ -266,6 +277,7 @@ public class ManPowerTaskService implements IManPowerTaskService {
         } else {
             jsonObject.put("total", jsonArrayAll.size());
         }
+        System.out.println(jsonObject);
         return jsonObject;
     }
 

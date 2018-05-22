@@ -30,6 +30,7 @@ public class TaskService implements ITaskService {
     @Override
     @Async
     public JSONObject insertTask(String taskInfo, String taskContext, String remarkContent, String daokongTypeOrder) {
+        System.out.println("导控类型" + daokongTypeOrder);
         JSONObject jsonObject = JSON.parseObject(taskInfo);
         String configId = jsonObject.getString("config_id");
         String taskCreate = jsonObject.getString("task_create");
@@ -43,9 +44,8 @@ public class TaskService implements ITaskService {
         String sqlGetNumber = "";
         String insertTaskSql = SqlEasy.insertObject(taskInfo, "guidance_task_main");
         int result = baseDao.execute(insertTaskSql);
-        System.out.println(remarkContent);
+        // 点赞的执行方法
         if (!"[]".equals(remarkContent)) {
-            System.out.println("执行");
             JSONArray jsonArray = JSON.parseArray(remarkContent);
             for (int i = 0, jsonArrayLen = jsonArray.size(); i < jsonArrayLen; i++) {
                 JSONObject jsonObjectRemark = jsonArray.getJSONObject(i);
@@ -70,6 +70,7 @@ public class TaskService implements ITaskService {
                 HttpClientUtil.sendPost("http://121.199.4.149:18080/api/news/thumbUp", map);
             }
         } else {
+            // 不是点赞
             // 获取到所有的账号和语料
             JSONArray jsonArrayNumber = new JSONArray();
             if (numberTypes.length == 2) {
@@ -88,6 +89,8 @@ public class TaskService implements ITaskService {
                     jsonArrayNumber = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlGetNumber, new String[]{configId,}));
                 }
             }
+
+            // 获取内容
             String[] taskContexts = taskContext.split(",");
             int taskContextsLen = taskContexts.length;
             Map<String, String> map = baseDao.rawQueryForMap("SELECT id FROM guidance_task_main ORDER BY id  DESC  LIMIT 1");
@@ -111,7 +114,6 @@ public class TaskService implements ITaskService {
             int numberSuccess = 0;
             for (int i = 0; i < Integer.parseInt(taskNumber, 10); i++) {
                 int randomNumber = (int) (Math.random() * jsonArrayNumberLen);
-                System.out.println(randomNumber);
                 int randomContext = (int) (Math.random() * taskContextsLen);
                 JSONObject jsonObjectNumber = jsonArrayNumber.getJSONObject(randomNumber);
                 Map<String, String> mapPost = new HashMap<>();
@@ -128,9 +130,9 @@ public class TaskService implements ITaskService {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    JSONObject jsonObjectSuccess = HttpClientUtil.sendPost(pilcontrolUrl, mapPost);
-                    System.out.println(jsonObjectSuccess.toString());
+                    JSONObject jsonObjectSuccess = HttpClientUtil.sendPost("http://121.199.4.149:18080/api/guide", mapPost);
                     String valueSuccess = jsonObjectSuccess.getString("status");
+                    System.out.println(valueSuccess);
                     if (valueSuccess.equals("1")) {
                         numberSuccess++;
                     }
@@ -144,8 +146,6 @@ public class TaskService implements ITaskService {
                 } else {
                     mapPost.put("account", jsonObjectNumber.getString("number_name"));
                     mapPost.put("password", jsonObjectNumber.getString("number_password"));
-                    System.out.println(jsonObjectNumber.getString("number_name"));
-                    System.out.println(jsonObjectNumber.getString("number_password"));
                     mapPost.put("url", taskUrl);
                     mapPost.put("host", "sina");
                     mapPost.put("content", taskContexts[randomContext]);

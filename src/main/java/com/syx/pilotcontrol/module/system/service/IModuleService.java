@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
  * Created by Master  Zg on 2016/11/15.
  */
 public interface IModuleService {
-
     public JSONObject insertModule(String moduleValue, String moduleUrl, String moduleId);
 
     public JSONArray getAllModule();

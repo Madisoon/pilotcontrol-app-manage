@@ -1,12 +1,13 @@
 package com.fantasi.common.db;
 
+import org.apache.commons.dbcp.BasicDataSource;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSource;
 
 public class DBPool implements IDBPool{
 	

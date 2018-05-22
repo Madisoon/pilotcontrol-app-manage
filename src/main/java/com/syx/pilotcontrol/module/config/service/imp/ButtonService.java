@@ -20,7 +20,7 @@ public class ButtonService implements IButtonService {
 
     @Override
     public JSONObject insertButton(String buttonData, String markData) {
-        String insertSql = SqlEasy.insertObject(buttonData, "sys_butfton");
+        String insertSql = SqlEasy.insertObject(buttonData, "sys_button");
         JSONArray jsonArray = JSON.parseArray(markData);
         int result = baseDao.execute(insertSql);
         JSONObject jsonObject = new JSONObject();
