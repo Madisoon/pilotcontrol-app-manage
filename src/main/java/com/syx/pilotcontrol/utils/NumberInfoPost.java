@@ -27,7 +27,7 @@ public class NumberInfoPost {
         /*String URI_SEND_SMS = "http://sms.yunpian.com/v2/sms/batch_send.json";*/
         // 公司的云片账号
         String apikey = "149b85f2319da3c78e25b49d748c6e2d";
-        String text = "【舆情平台】提醒:" + content;
+        String text = "【舆情平台】尊敬的用户，您设置的关注有新信息到达，请您点击查看:" + content;
         // 自己的云片账号
         /*String apikey = "b7788163efb1d1d9368b179da116bafe";
         String text = "【舆情服务通知】舆情通知:" + content + "。请注意查收！";*/
